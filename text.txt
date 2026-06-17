@@ -1,0 +1,4 @@
+Pipeline-Test: Commit & Push funktionieren.
+
+Цей файл створено, щоб перевірити, що зміни з Claude доходять до GitHub (гілка main).
+Нічого не зламано — можна видаляти будь-коли.
