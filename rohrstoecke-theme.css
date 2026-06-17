@@ -2392,12 +2392,12 @@ body.is-ctl-product .product-detail-media {
 }
 /* ДИНАМІЧНА ВИСОТА ГАЛЕРЕЇ: знімаємо ВСІ жорсткі height/min-height-локи
    (стара секція 8 + тема), щоб "вікно" підлаштовувалось під фото.
-   align-items:center — фото вертикально по центру відносно колонки мініатюр
+   align-items:flex-start — фото СТРОГО ЗВЕРХУ, щоб галерея не стрибала при зміні висоти фото
    (а не розтягнуте до 520px з порожнечею, як при дефолтному stretch).
    Точну висоту під активне фото виставляє JS (rohrstoecke-theme.js,
    секція "RS GALLERY AUTO-HEIGHT"): .tns-ovh = висота активного фото. */
 body.is-ctl-product .product-detail-media .gallery-slider-row {
-  align-items: center !important;
+  align-items: flex-start !important;
 }
 body.is-ctl-product .product-detail-media .gallery-slider-col,
 body.is-ctl-product .product-detail-media .gallery-slider,
@@ -3087,4 +3087,11 @@ html.rs-wood .cms-element-product-listing .product-box .product-price-info,
 html.rs-wood .cms-element-product-listing .product-box .product-action {
   position: relative !important;
   z-index: 6 !important;
+}
+
+/* ---- 11.8b) Сторінка товару: ховаємо іконки eye/heart у картках
+   крос-селінгу та "Ähnliche Artikel" (на прохання). Каталог не зачіпається. ---- */
+body.is-ctl-product .product-box .product-wishlist,
+body.is-ctl-product .product-box .product-quickview {
+  display: none !important;
 }
