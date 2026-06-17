@@ -1,4 +1,3 @@
-<script>
 /* ВЕРСІЯ-МАРКЕР: для перевірки в консолі, що завантажена нова збірка. */
 console.log("%cRohrstöcke theme JS v5 (product-stable)", "color:#b7773d;font-weight:bold;");
 
@@ -483,4 +482,3 @@ console.log("%cRohrstöcke theme JS v5 (product-stable)", "color:#b7773d;font-we
     initProductDetail();
   }
 })();
-</script>
