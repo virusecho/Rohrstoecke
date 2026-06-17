@@ -1,0 +1,2203 @@
+/* =========================================================
+   ROHRSTOECKE – GLOBAL THEME & HEADER (CSS)
+   ---------------------------------------------------------
+   JS винесено в окремий файл: rohrstoecke-theme.js
+   (підключати після цього CSS).
+
+   ЗМІСТ:
+     0)  @import шрифтів + :root змінні теми
+     1)  UNIVERSAL WOOD THEME (body, типографіка, кнопки, чіпи, анімації)
+     2)  HEADER OVERRIDE (новий бар, пошук, дії, респонсив)
+     3)  SEARCH COLLAPSE (завжди відкритий)
+     4)  CMS / THEMEWARE CLEANUP
+     5)  Інші оверрайди (типографіка, zoom, packstation, shipping)
+     6)  ACRIS SEARCH SUGGEST – глобальний фікс + tablet/mobile
+     7)  PRODUCT DETAIL v5 (коридор, layout, buybox, конфігуратор, таби)
+     8)  PRODUCT GALLERY (3 послідовні блоки — див. [TODO-CLEANUP #1])
+
+   ПОЗНАЧКИ НА МАЙБУТНЄ (нічого ще не видалено!):
+     [TODO-CLEANUP #1] Галерея товару: 3 конфліктні блоки (.product-detail-media).
+                       Зараз виграє останній (contain/no-crop). Уточнити бажаний вигляд,
+                       тоді лишити один блок.
+     [TODO-CLEANUP #2] "Коридор 1100px" сторінки товару дублюється кілька разів
+                       наприкінці файлу — можна звести до одного блоку.
+     [TODO-CLEANUP #3] JS створює .rs-variant-pill / .rs-variant-pill-row /
+                       .rs-variant-hidden, але стилів для них тут НЕМАЄ.
+                       Потрібно додати (інакше select варіантів просто ховається).
+     [TODO-CLEANUP #4] Логотип у JS захардкоджено на чужий домен (fetisch-hof.de).
+     [TODO-CLEANUP #5] Глобальні селектори без неймспейсу (.btn-primary, .cms-section,
+                       .page-wrapper{background:#fff!important} тощо) можуть зачіпати
+                       checkout / інші сторінки — перевірити.
+   ========================================================= */
+
+/* =========================================
+   0) FONTS + ROOT VARIABLES
+   ========================================= */
+
+/* Google Fonts */
+/* [TODO-CLEANUP] @import блокує рендер — згодом перенести у <link> в <head>. */
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Handlee&display=swap");
+
+/* Головні змінні теми */
+:root {
+  --rs-version: "v5-product-stable"; /* маркер версії — для перевірки в консолі */
+  --rs-wood-bg1: #f9f3ea;
+  --rs-wood-bg2: #f2e4d1;
+  --rs-wood-bg3: #e7d3b6;
+  --rs-wood-nav: #f1e1cd;
+  --rs-wood-grain: rgba(180, 140, 90, 0.18);
+
+  --rs-text-main: #3c2b1c;
+  --rs-text-muted: #7a6a5b;
+  --rs-accent: #b7773d;
+  --rs-accent-soft: #dca46b;
+
+  --rs-chip-bg: rgba(255, 255, 255, 0.88);
+  --rs-border-subtle: rgba(80, 60, 40, 0.12);
+
+  --rs-radius-lg: 18px;
+  --rs-radius-pill: 999px;
+  --rs-shadow-soft: 0 18px 50px rgba(80, 52, 30, 0.25);
+
+  --rs-max-width: 1300px;
+
+  --rs-font-body: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
+  --rs-font-serif: "Playfair Display", "Times New Roman", serif;
+  --rs-font-hand: "Handlee", "Comic Neue", system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* =========================================
+   1) UNIVERSAL WOOD THEME
+   ========================================= */
+
+.rs-wood body {
+  margin: 0;
+  font-family: var(--rs-font-body);
+  color: var(--rs-text-main);
+  background:
+    radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.85), transparent 55%),
+    radial-gradient(circle at 100% 100%, rgba(255, 255, 255, 0.95), transparent 55%),
+    linear-gradient(135deg, var(--rs-wood-bg1), var(--rs-wood-bg2), var(--rs-wood-bg3));
+  min-height: 100vh;
+  position: relative;
+  -webkit-font-smoothing: antialiased;
+}
+
+.rs-wood body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0,
+      transparent 6px,
+      rgba(255, 255, 255, 0.16) 6px,
+      rgba(255, 255, 255, 0.16) 7px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 18px,
+      var(--rs-wood-grain) 18px,
+      var(--rs-wood-grain) 19px
+    );
+  mix-blend-mode: soft-light;
+  opacity: 0.7;
+  z-index: -1;
+}
+
+.rs-wood a {
+  color: var(--rs-accent);
+  text-decoration: none;
+  transition: color 0.2s ease, opacity 0.2s ease, text-shadow 0.2s ease;
+}
+
+.rs-wood a:hover {
+  color: var(--rs-accent-soft);
+  text-shadow: 0 0 8px rgba(220, 164, 107, 0.4);
+}
+
+.rs-wood h1,
+.rs-wood h2,
+.rs-wood h3 {
+  margin: 0 0 0.45em;
+  font-family: var(--rs-font-serif);
+  letter-spacing: 0.02em;
+  color: #2c1f15;
+}
+
+.rs-wood h1 {
+  font-size: clamp(2.2rem, 3vw, 2.8rem);
+  line-height: 1.05;
+}
+
+.rs-wood h2 {
+  font-size: clamp(1.6rem, 2.4vw, 2.1rem);
+}
+
+.rs-wood p {
+  margin: 0 0 0.9em;
+  line-height: 1.6;
+  color: var(--rs-text-main);
+}
+
+/* Центруюча обгортка */
+.rs-wood .rs-wrapper {
+  max-width: var(--rs-max-width);
+  margin: 0 auto;
+  padding-inline: 16px;
+}
+
+/* Кнопки */
+.rs-wood .rs-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.7rem;
+  border-radius: var(--rs-radius-pill);
+  border: 1px solid rgba(80, 52, 30, 0.3);
+  background: linear-gradient(135deg, #fdf6ed, #f0dcc1);
+  box-shadow: 0 10px 30px rgba(80, 52, 30, 0.25);
+  font-weight: 600;
+  font-size: 0.98rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--rs-text-main);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+}
+
+.rs-wood .rs-btn span.rs-btn-hand {
+  font-family: var(--rs-font-hand);
+  font-size: 1.05rem;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.rs-wood .rs-btn:hover {
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, #fff9f2, #f4e0c7);
+  box-shadow: 0 16px 40px rgba(80, 52, 30, 0.28);
+}
+
+.rs-wood .rs-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 6px 18px rgba(80, 52, 30, 0.22);
+}
+
+/* Чіпи */
+.rs-wood .rs-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.rs-wood .rs-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.45rem 0.95rem;
+  border-radius: var(--rs-radius-pill);
+  background: var(--rs-chip-bg);
+  border: 1px solid var(--rs-border-subtle);
+  font-size: 0.9rem;
+  color: var(--rs-text-main);
+  box-shadow: 0 6px 18px rgba(80, 52, 30, 0.18);
+  backdrop-filter: blur(4px);
+  transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+}
+
+.rs-wood .rs-chip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 26px rgba(80, 52, 30, 0.24);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+/* Глобальна анімація data-rs-animate */
+.rs-wood [data-rs-animate] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.rs-wood .rs-in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width: 600px) {
+  .rs-wood body {
+    font-size: 0.97rem;
+  }
+
+  .rs-wood .rs-wrapper {
+    padding-inline: 14px;
+  }
+}
+
+/* =========================================
+   2) HEADER OVERRIDE (NEW BAR)
+   ========================================= */
+
+/* Прибираємо старий верхній ряд ТІЛЬКИ коли новий хедер реально зібраний */
+html.rs-wood.rs-header-built header.header-main .header-row {
+  display: none !important;
+}
+
+/* Ховаємо стару Shopware-навігацію після збірки нового хедера */
+html.rs-wood.rs-header-built header.header-main .nav-main,
+html.rs-wood.rs-header-built .header-main .nav-main,
+html.rs-wood.rs-header-built .header-main .main-navigation,
+html.rs-wood.rs-header-built .main-navigation,
+html.rs-wood.rs-header-built .nav-main,
+html.rs-wood.rs-header-built .rs-wood .nav-main {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Новий бар */
+.rs-wood .rs-header-nav {
+  background: linear-gradient(135deg, var(--rs-wood-nav), #ead0b2);
+  border-bottom: 1px solid rgba(80, 60, 40, 0.16);
+  box-shadow: 0 10px 26px rgba(80, 52, 30, 0.18);
+  position: relative;
+  z-index: 140;
+}
+
+/* Базовий внутрішній контейнер (для моб. теж, далі перерахуємо в медіа) */
+.rs-wood .rs-header-nav__inner {
+  max-width: var(--rs-max-width);
+  margin: 0 auto;
+  padding: 10px 16px 11px;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+/* Бренд-блок */
+.rs-wood .rs-header-nav__brand-block {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  white-space: nowrap;
+}
+
+.rs-wood .rs-header-nav__brand-logo {
+  display: inline-flex;
+  align-items: center;
+}
+
+.rs-wood .rs-header-nav__brand-logo img {
+  max-height: 60px;
+  width: auto;
+  display: block;
+}
+
+.rs-wood .rs-header-nav__brand {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.rs-wood .rs-header-nav__brand-main {
+  font-family: var(--rs-font-serif);
+  font-size: 1.3rem;
+  letter-spacing: 0.06em;
+}
+
+.rs-wood .rs-header-nav__brand-sub {
+  font-family: var(--rs-font-hand);
+  font-size: 0.76rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--rs-text-muted);
+  margin-top: 0.08rem;
+}
+
+/* Навігація */
+.rs-wood .rs-header-nav__nav {
+  flex: 1;
+  overflow-x: visible;
+}
+
+.rs-wood .rs-header-nav__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.1rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: baseline;
+  row-gap: 0.2rem;
+}
+
+.rs-wood .rs-header-nav__list > li {
+  position: relative;
+  white-space: nowrap;
+  font-family: var(--rs-font-serif);
+  font-size: 0.96rem;
+  padding-inline: 0.35rem;
+}
+
+.rs-wood .rs-header-nav__list > li + li::before {
+  content: "";
+  position: absolute;
+  left: -0.05rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 0.85em;
+  background: rgba(120, 90, 60, 0.38);
+  opacity: 0.9;
+}
+
+.rs-wood .rs-header-nav__list > li > a {
+  color: var(--rs-text-main);
+  position: relative;
+  padding-bottom: 0.1rem;
+}
+
+.rs-wood .rs-header-nav__list > li > a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -0.12rem;
+  width: 0;
+  height: 1px;
+  background: var(--rs-accent);
+  transition: width 0.2s ease;
+}
+
+.rs-wood .rs-header-nav__list > li > a:hover::after {
+  width: 100%;
+}
+
+.rs-wood .rs-header-nav__list > li.active > a,
+.rs-wood .rs-header-nav__list > li > a.active {
+  color: var(--rs-accent);
+  font-weight: 600;
+}
+
+/* SEARCH IN HEADER */
+
+.rs-wood .rs-header-nav__search {
+  flex: 0 0 260px;
+  max-width: 260px;
+}
+
+.rs-wood .rs-header-nav__search .header-search {
+  margin: 0;
+}
+
+.rs-wood .rs-header-nav__search .header-search-form {
+  width: 100%;
+}
+
+.rs-wood .rs-header-nav__search .input-group {
+  width: 100%;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 10px 28px rgba(80, 52, 30, 0.22);
+  display: flex;
+  align-items: stretch;
+}
+
+.rs-wood .rs-header-nav__search .header-search-input {
+  flex: 1 1 auto !important;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  padding: 0 0.95rem 0 1.1rem;
+  font-size: 0.9rem;
+  color: var(--rs-text-main);
+  height: 44px;
+  line-height: 44px;
+}
+
+.rs-wood .rs-header-nav__search .header-search-input::placeholder {
+  color: rgba(90, 70, 50, 0.65);
+}
+
+.rs-wood .rs-header-nav__search .header-search-input:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.rs-wood .rs-header-nav__search .header-search-btn {
+  flex: 0 0 56px !important;
+  border: none;
+  background: linear-gradient(135deg, #f0dcc1, #e1c19c);
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  border-left: 1px solid rgba(80, 60, 40, 0.12);
+}
+
+.rs-wood .rs-header-nav__search .header-search-btn .icon-search svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Вимикаємо кнопку закриття пошуку */
+.rs-wood .rs-header-nav__search .header-close-btn {
+  display: none !important;
+}
+
+/* Блок з діями справа */
+.rs-wood .rs-header-nav__actions {
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.rs-wood .rs-header-nav__actions-top {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+}
+
+.rs-wood .rs-header-nav__actions-bottom {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  color: var(--rs-text-muted);
+  justify-content: flex-end;
+}
+
+.rs-wood .rs-header-nav__actions-bottom .rs-header-service {
+  font-weight: 500;
+  color: var(--rs-text-main);
+}
+
+.rs-wood .rs-header-nav__actions-bottom .rs-header-time {
+  color: var(--rs-text-muted);
+}
+
+/* Ховаємо search-toggle, бо пошук завжди відкритий */
+.rs-wood .rs-header-nav__actions-top .search-toggle-btn {
+  display: none !important;
+}
+
+/* ===== ДЕСКТОПНИЙ ЛЕЙАУТ (ікони зверху праворуч) ===== */
+@media (min-width: 1024px) {
+  .rs-wood .rs-header-nav__inner {
+    display: grid;
+    grid-template-columns: auto minmax(260px, 480px);
+    grid-template-rows: auto auto;
+    align-items: center;
+    max-width: var(--rs-max-width);
+    margin: 0 auto;
+    padding: 10px 240px 12px 24px; /* праворуч запас під іконки */
+    column-gap: 0.5rem;
+    box-sizing: border-box;
+  }
+
+  .rs-wood .rs-header-nav__brand-block {
+    grid-row: 1;
+    grid-column: 1;
+    justify-self: start;
+  }
+
+  /* search на десктопі, як було — не чіпаємо */
+  .rs-wood .rs-header-nav__search {
+    justify-self: start;
+    width: 100%;
+    max-width: 480px;
+    margin-left: 1.4rem;
+  }
+
+  .rs-wood .rs-header-nav__nav {
+    grid-row: 2;
+    grid-column: 1 / 3;
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  .rs-wood .rs-header-nav__list {
+    justify-content: flex-start; /* Home під Rohrstöcke */
+  }
+
+  /* ІКОНКИ: прив'язані до верха праворуч */
+  .rs-wood .rs-header-nav__actions {
+    position: absolute;
+    top: 10px;
+    right: 24px;
+    transform: none;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    white-space: nowrap;
+  }
+
+  .rs-wood .rs-header-nav__actions-bottom {
+    display: flex;
+  }
+}
+
+/* ===== МОБІЛЬНИЙ / ПЛАНШЕТНИЙ ЛЕЙАУТ (<= 1024px) ===== */
+@media (max-width: 1024px) {
+  .rs-wood .rs-header-nav__inner {
+    padding: 8px 12px;
+    display: grid;
+    grid-template-areas:
+      "brand actions"   /* 1: лого + текст / іконки */
+      "search search"   /* 2: пошук на всю ширину */
+      "nav nav";        /* 3: меню */
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    align-items: center;
+  }
+
+  /* 1 рядок: бренд */
+  .rs-wood .rs-header-nav__brand-block {
+    grid-area: brand;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow: hidden;
+  }
+
+  .rs-wood .rs-header-nav__brand-logo img {
+    max-height: 45px;
+    min-height: 45px;
+  }
+
+  .rs-wood .rs-header-nav__brand {
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .rs-wood .rs-header-nav__brand-main {
+    font-size: 1.1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .rs-wood .rs-header-nav__brand-sub {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* 1 рядок: іконки справа */
+  .rs-wood .rs-header-nav__actions {
+    grid-area: actions;
+    margin-left: 0;
+    position: static;
+    transform: none;
+    width: auto;
+  }
+
+  .rs-wood .rs-header-nav__actions-top {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+  }
+
+  .rs-wood .rs-header-nav__actions-top .search-toggle-btn,
+  .rs-wood .rs-header-nav__actions-top .nav-main-toggle-btn,
+  .rs-wood .rs-header-nav__actions-top .menu-button {
+    display: none !important;
+  }
+
+  .rs-wood .rs-header-nav__actions-bottom {
+    display: none !important;
+  }
+
+  /* Зменшуємо іконки + текст */
+  .rs-wood .rs-header-nav__actions-top .header-actions-btn {
+    padding: 0 4px;
+  }
+
+  .rs-wood .rs-header-nav__actions-top svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .rs-wood .rs-header-nav__actions-top .header-wishlist-name,
+  .rs-wood .rs-header-nav__actions-top .header-account-name,
+  .rs-wood .rs-header-nav__actions-top .header-cart-name,
+  .rs-wood .rs-header-nav__actions-top .header-cart-total {
+    font-size: 0.8rem;
+  }
+
+  /* 2 рядок: пошук – базово */
+  .rs-wood .rs-header-nav__search-row {
+    grid-area: search;
+    width: 100%;
+    position: relative; /* для Vorschau */
+  }
+
+  .rs-wood .rs-header-nav__search {
+    width: 100%;
+    flex: 1 1 auto;
+    max-width: 100%;
+    margin: 0;
+  }
+
+  .rs-wood .rs-header-nav__search .input-group {
+    border-radius: 12px;
+    height: 40px;
+    box-shadow: 0 4px 12px rgba(80, 52, 30, 0.15);
+  }
+
+  .rs-wood .rs-header-nav__search .header-search-input {
+    height: 40px;
+    line-height: 40px;
+    padding: 0 12px;
+    font-size: 0.95rem;
+  }
+
+  .rs-wood .rs-header-nav__search .header-search-btn {
+    width: 50px;
+    flex: 0 0 50px !important;
+    height: 40px;
+    padding: 0;
+  }
+
+  .rs-wood .rs-header-nav__search .header-search-btn .icon-search svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* 3 рядок: меню */
+  .rs-wood .rs-header-nav__nav {
+    grid-area: nav;
+    width: 100%;
+    margin-top: 4px;
+    overflow: visible;
+  }
+
+  .rs-wood .rs-header-nav__list {
+    display: flex;
+    gap: 8px;
+    padding-bottom: 4px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    min-width: min-content;
+  }
+
+  .rs-wood .rs-header-nav__list > li {
+    font-size: 0.85rem;
+    padding: 4px 8px;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .rs-wood .rs-header-nav__list > li + li::before {
+    left: -4px;
+    height: 0.7em;
+  }
+}
+
+/* =========================================
+   3) SEARCH COLLAPSE – завжди відкритий
+   ========================================= */
+
+.rs-wood #searchCollapse.collapse {
+  display: block !important;
+  height: auto !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.rs-wood #searchCollapse .header-search {
+  margin: 0 !important;
+}
+
+/* Прибрати native "X" у type="search" */
+.rs-wood .rs-header-nav__search input[type="search"] {
+  -webkit-appearance: textfield;
+  appearance: textfield;
+}
+
+.rs-wood .rs-header-nav__search input[type="search"]::-webkit-search-decoration,
+.rs-wood .rs-header-nav__search input[type="search"]::-webkit-search-cancel-button,
+.rs-wood .rs-header-nav__search input[type="search"]::-webkit-search-results-button,
+.rs-wood .rs-header-nav__search input[type="search"]::-webkit-search-results-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
+}
+
+/* =========================================
+   4) CMS / THEMEWARE CLEANUP
+   ========================================= */
+
+.rs-wood .cms-section,
+.rs-wood .cms-block {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.rs-wood .cms-section .cms-section-container,
+.rs-wood .cms-block-container {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.rs-wood .content-main .cms-section:last-of-type,
+.rs-wood .content-main .cms-section:last-of-type .cms-section-container,
+.rs-wood .content-main .cms-section:last-of-type .cms-block,
+.rs-wood .content-main .cms-section:last-of-type .cms-block-container {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  min-height: 0 !important;
+}
+
+/* Підчищаємо ThemeWare sticky */
+html.rs-wood .is-sticky,
+html.rs-wood .is-sticky + .content-main {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  height: auto !important;
+}
+
+/* Додатковий ThemeWare-клінінг для категорій */
+.is-act-category-page body {
+  background: #f4f1ef !important;
+}
+
+.is-act-category-page .page-wrapper,
+.is-act-category-page .content-main,
+.is-act-category-page .container-main,
+.is-act-category-page .main-content {
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* ThemeWare Kategorie Hintergrund komplett neutralisieren */
+.tw-content-wrapper,
+.tw-page-wrapper,
+.category-page,
+.is-ctl-navigation .content-main,
+.is-ctl-category .content-main,
+.page-wrapper,
+.content-main,
+.container-main,
+.main-content {
+  background: #ffffff !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* eventuelle Trennbalken entfernen */
+.tw-section,
+.tw-section-wrapper {
+  background: transparent !important;
+}
+
+/* Breadcrumb-/Titel-Bereich entfernen */
+.breadcrumb-container,
+.cms-breadcrumb,
+.tw-breadcrumb,
+.page-breadcrumb,
+.category-breadcrumb {
+  display: none !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Header-Spacer entfernen */
+.tw-page-header,
+.tw-header-spacer,
+.tw-sticky-header-spacer,
+.header-spacer,
+.category-header {
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  height: 0 !important;
+}
+
+/* Sticky-Header-Abstand eliminieren */
+.tw-header-spacer,
+.tw-sticky-spacer,
+.header-spacer,
+.is-sticky + .content-main,
+.is-sticky ~ .content-main {
+  height: 0 !important;
+  min-height: 0 !important;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+.is-ctl-navigation .content-main {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* =========================================
+   5) Інші оверрайди (типографіка, zoom, packstation, shipping)
+   ========================================= */
+
+.btn-link {
+  color: #000;
+}
+
+/* Checkout mini-übersicht – чорний текст */
+.checkout .checkout-aside-product-list .nesting-level-1 .line-item-details-container div,
+.checkout .checkout-aside-product-list .nesting-level-1 .line-item-price div {
+  color: #000000 !important;
+}
+
+/* Галерея – зображення на всю ширину */
+.gallery-slider-item .gallery-slider-image {
+  inline-size: -webkit-fill-available;
+}
+
+/* --- Edel-Feinschliff Startseite Rohrstöcke --- */
+
+.cms-element-text {
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+  font-weight: 500;
+}
+
+.cms-element-text h1 {
+  margin-bottom: 1.8rem;
+  letter-spacing: 0.02em;
+  line-height: 1.15;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+  letter-spacing: 0.04em;
+  line-height: 1.12;
+  text-transform: uppercase;
+}
+
+.cms-element-text p {
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.btn-primary {
+  background-color: #111;
+  border-color: #111;
+  color: #fff;
+  padding: 0.75rem 1.8rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-top: 2.5rem;
+}
+
+.btn-primary:hover {
+  background-color: #000;
+  border-color: #000;
+}
+
+.cms-element-text .row > div {
+  padding-top: 1.2rem;
+  border-top: 2px solid #e6e2df;
+  text-align: left;
+}
+
+.cms-section:first-child {
+  background: #f4f1ef;
+  padding-top: 3.5rem;
+  padding-bottom: 4rem;
+}
+
+.category-links {
+  margin-top: 2rem;
+  text-align: center;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+.category-links a {
+  color: #555;
+  text-decoration: none;
+  padding: 0 0.4rem;
+}
+
+.category-links a:hover {
+  color: #111;
+}
+
+.category-links span {
+  color: #bbb;
+}
+
+.category-title {
+  margin-bottom: 20px;
+  display: none;
+}
+
+/* Produkt-Zoom begrenzen */
+.product-detail-image-zoom-modal img,
+.product-detail-image-modal img,
+.gallery-slider-item img {
+  max-width: 90vw !important;
+  max-height: 90vh !important;
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain;
+}
+
+/* Startseite Typografie verbessern */
+.cms-page h1 {
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.cms-page h2 {
+  margin-top: 3rem;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+.cms-page p {
+  line-height: 1.7;
+  color: #333;
+}
+
+/* Mehr Abstand між секціями */
+.cms-section {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
+/* Vertrauensboxen */
+.cms-block-text {
+  background: #fafafa;
+  padding: 1.5rem;
+  border-radius: 4px;
+}
+
+/* Kategorie-Kacheln Hover */
+.cms-element-category-listing .card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cms-element-category-listing .card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* SEO-Text unten */
+.cms-page .seo-text {
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid #ddd;
+}
+
+/* --- PH SHIPPING – контраст --- */
+
+.ph-shipping {
+  color: rgba(245, 245, 245, 0.92);
+}
+
+.ph-shipping p,
+.ph-shipping li,
+.ph-shipping__finder-label,
+.ph-shipping__finder-result,
+.ph-shipping__bank p {
+  color: rgba(245, 245, 245, 0.9);
+}
+
+.ph-shipping h1,
+.ph-shipping h2,
+.ph-shipping h3,
+.ph-shipping h4 {
+  color: rgba(255, 255, 255, 0.96);
+}
+
+.ph-shipping__subtitle,
+.ph-shipping__foot,
+.ph-shipping__bank-qr-note,
+.ph-shipping__notes {
+  color: rgba(245, 245, 245, 0.75);
+}
+
+.ph-shipping__bank strong {
+  color: rgba(255, 255, 255, 0.98);
+}
+
+.ph-shipping__bank {
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.ph-shipping__finder-input {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.ph-shipping__finder-input::placeholder {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.ph-shipping__card,
+.ph-shipping__bank,
+.ph-shipping__finder,
+.ph-shipping__notes {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+}
+
+/* --- PH PACKSTATION BASE + ROHR THEME --- */
+
+.ph-packstation {
+  --phps-bg: #0c0c0f;
+  --phps-fg: #f5f5f5;
+  --phps-muted: rgba(245, 245, 245, 0.9);
+  --phps-border: rgba(255, 255, 255, 0.04);
+  --phps-border-strong: rgba(255, 255, 255, 0.12);
+  --phps-accent: rgba(230, 57, 70, 0.18);
+  --phps-accent2: rgba(182, 31, 43, 0.18);
+
+  --phps-card-radius: 1.5rem;
+  --phps-img-radius: 1.1rem;
+
+  --phps-shadow-outer: 0 24px 60px rgba(0, 0, 0, 0.85);
+  --phps-shadow-img: 0 18px 40px rgba(0, 0, 0, 0.85);
+
+  max-width: 1080px;
+  margin: 0 auto 4rem;
+  padding: clamp(2rem, 4vw, 3rem);
+  border-radius: var(--phps-card-radius);
+  background:
+    radial-gradient(circle at top left, var(--phps-accent), transparent 55%),
+    radial-gradient(circle at bottom right, var(--phps-accent2), transparent 55%),
+    var(--phps-bg);
+  box-shadow:
+    var(--phps-shadow-outer),
+    0 0 0 1px var(--phps-border);
+  color: var(--phps-fg);
+  position: relative;
+  overflow: hidden;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+.ph-packstation * {
+  box-sizing: border-box;
+}
+
+.ph-packstation::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.06),
+    transparent 40%,
+    transparent 60%,
+    rgba(255, 255, 255, 0.03)
+  );
+  mix-blend-mode: soft-light;
+  opacity: 0.7;
+}
+
+.ph-packstation__inner {
+  position: relative;
+  z-index: 1;
+}
+
+.ph-packstation__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.18rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  background: rgba(0, 0, 0, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(249, 249, 249, 0.75);
+  margin-bottom: 0.75rem;
+}
+
+.ph-packstation__badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(230, 57, 70, 0.9);
+  box-shadow: 0 0 10px rgba(230, 57, 70, 0.8);
+}
+
+.ph-packstation h1 {
+  font-size: clamp(1.9rem, 3vw, 2.5rem);
+  margin: 0 0 0.75rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--phps-fg) !important;
+  opacity: 1 !important;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.55) !important;
+}
+
+.ph-packstation__divider {
+  border: 0;
+  border-top: 1px solid var(--phps-border-strong);
+  margin: 1.5rem 0 1.75rem;
+}
+
+.ph-packstation__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: clamp(1.8rem, 3vw, 2.4rem);
+  align-items: flex-start;
+}
+
+.ph-packstation__content {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--phps-muted);
+}
+
+.ph-packstation__content strong {
+  font-weight: 600;
+  color: #fff;
+}
+
+.ph-packstation__content p {
+  margin: 0 0 1rem;
+}
+
+.ph-packstation__content ul {
+  margin: 0.4rem 0 1.2rem;
+  padding-left: 1.1rem;
+}
+
+.ph-packstation__content li {
+  margin: 0 0 0.25rem;
+}
+
+.ph-packstation__content a {
+  color: #ff6b81;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+  text-decoration-color: rgba(255, 107, 129, 0.6);
+}
+
+.ph-packstation__content a:hover {
+  text-decoration-thickness: 2px;
+  text-decoration-color: rgba(255, 255, 255, 0.9);
+}
+
+.ph-packstation__hint {
+  margin-top: 1.2rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: 0.75rem;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.9rem;
+}
+
+.ph-packstation__hint-title {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  opacity: 0.85;
+  margin-bottom: 0.3rem;
+  color: rgba(245, 245, 245, 0.92);
+}
+
+.ph-packstation__image-wrap {
+  border-radius: var(--phps-img-radius);
+  overflow: hidden;
+  background: #050507;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: var(--phps-shadow-img);
+}
+
+.ph-packstation__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (max-width: 800px) {
+  .ph-packstation__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .ph-packstation {
+    padding: 1.7rem 1.1rem 2.1rem;
+    border-radius: 1.1rem;
+  }
+}
+
+/* Rohrstoecke.de — LIGHT THEME OVERRIDE */
+.ph-packstation.phpsTheme--rohr {
+  --phps-bg: #0b0b10;
+  --phps-accent: rgba(230, 57, 70, 0.14);
+  --phps-accent2: rgba(182, 31, 43, 0.14);
+
+  --phps-border: rgba(0, 0, 0, 0.1);
+  --phps-border-strong: rgba(255, 255, 255, 0.14);
+
+  --phps-shadow-outer: 0 18px 42px rgba(0, 0, 0, 0.35);
+  --phps-shadow-img: 0 14px 30px rgba(0, 0, 0, 0.38);
+
+  --phps-fg: #f6f7f9;
+  --phps-muted: rgba(246, 247, 249, 0.88);
+
+  margin-top: 1.25rem;
+  box-shadow:
+    var(--phps-shadow-outer),
+    0 0 0 1px rgba(0, 0, 0, 0.12),
+    0 0 0 6px rgba(255, 255, 255, 0.55);
+}
+
+.ph-packstation.phpsTheme--rohr .ph-packstation__content a {
+  text-decoration-color: rgba(255, 107, 129, 0.72);
+}
+
+/* Eltern-Container wieder voll sichtbar machen */
+.rohrstock-content,
+.rohrstock-content * {
+  opacity: 1 !important;
+  position: relative;
+  z-index: 5;
+}
+
+.rohrstock-content::before,
+.rohrstock-content::after {
+  display: none !important;
+}
+
+/* =========================================
+   6) ACRIS SEARCH SUGGEST – GLOBAL FIX
+   ========================================= */
+
+.rs-wood .search-suggest.js-search-result {
+  z-index: 9999 !important;
+  position: absolute;
+  left: 0;
+  right: 0;
+  width: 100%;
+}
+
+.rs-wood .search-suggest-container.position-calculated {
+  left: 0 !important;
+  right: 0 !important;
+  margin: 0 auto !important;
+  transform: none !important;
+  max-width: min(1360px, 100vw - 40px) !important;
+  width: 100% !important;
+}
+
+/* === Tablet-Fix für die Suche Rohrstoecke.de (768–1024px) === */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .rs-wood .rs-header-nav__search-row {
+    grid-area: search;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: visible;
+    margin-top: 4px;
+  }
+
+  .rs-wood .rs-header-nav__search {
+    flex: 0 1 auto;
+    max-width: 480px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .rs-wood .rs-header-nav__search .input-group {
+    width: 100%;
+  }
+}
+
+/* === Mobile-Fix für die Suche Rohrstoecke.de (<=768px) === */
+@media (max-width: 768px) {
+  .rs-wood .rs-header-nav__search-row {
+    grid-area: search;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: visible;
+    margin-top: 4px;
+  }
+
+  .rs-wood .rs-header-nav__search {
+    flex: 0 1 auto;
+    max-width: 480px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .rs-wood .rs-header-nav__search .input-group {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   7) ROHRSTOECKE – PRODUCT DETAIL v5 (clean) — FINAL (safe)
+   - коридор 1100px (включно з outer containers)
+   - НЕ ламає bootstrap gutters
+   - НЕ лізе в механіку Shopware gallery ratio-box
+   - залишає premium-картки для media + buybox + tabs
+   ========================================================= */
+
+/* ---- 7.0) SAFE CORRIDOR (outer containers + product blocks) ---- */
+/* [TODO-CLEANUP #2] цей "коридор 1100px" нижче дублюється ще кілька разів. */
+
+body.is-ctl-product .content-main > .container,
+body.is-ctl-product .content-main .container,
+body.is-ctl-product .cms-page,
+body.is-ctl-product .cms-section .boxed,
+body.is-ctl-product .product-detail,
+body.is-ctl-product .product-detail-main,
+body.is-ctl-product .product-detail-tabs,
+body.is-ctl-product .product-detail-headline,
+body.is-ctl-product .breadcrumb {
+  width: 100% !important;
+  max-width: 1100px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 18px !important;
+  padding-right: 18px !important;
+}
+
+/* ВАЖЛИВО: не прибиваємо .row / col-* gutters! */
+
+
+/* ---- 7.1) Головний контейнер продукту – центральний коридор ---- */
+
+html.is-ctl-product .product-detail,
+.is-ctl-product .product-detail {
+  max-width: 1100px !important;
+  margin: 2.4rem auto 3.4rem !important;
+  padding: 0 18px !important;
+  background: transparent !important;
+}
+
+/* Прибираємо старі карточки/рамки */
+html.is-ctl-product .product-detail .card,
+html.is-ctl-product .product-detail .card-body,
+.is-ctl-product .product-detail .card,
+.is-ctl-product .product-detail .card-body {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+/* ---- 7.2) Двоколонковий layout (галерея + buybox) ---- */
+
+html.is-ctl-product .product-detail-main,
+.is-ctl-product .product-detail-main {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.15fr) !important;
+  gap: 2.2rem !important;
+  align-items: flex-start !important;
+  max-width: 1100px !important;
+  margin: 0 auto !important;
+}
+
+/* Заголовок продукту */
+html.is-ctl-product .product-detail-name,
+.is-ctl-product .product-detail-name {
+  font-family: var(--rs-font-serif) !important;
+  font-size: clamp(1.9rem, 2.4vw, 2.3rem) !important;
+  letter-spacing: 0.045em !important;
+  text-transform: uppercase !important;
+  line-height: 1.15 !important;
+  color: #2c1f15 !important;
+  margin: 0 0 1.2rem !important;
+}
+
+/* Невеликий надзаголовок (виробник/категорія) */
+html.is-ctl-product .product-detail-manufacturer,
+.is-ctl-product .product-detail-manufacturer {
+  font-family: var(--rs-font-hand) !important;
+  font-size: 0.95rem !important;
+  color: var(--rs-text-muted) !important;
+  margin-bottom: 0.25rem !important;
+}
+
+/* ---- 7.3) ЛІВА КОЛОНКА – ГАЛЕРЕЯ (SAFE) ----
+   ТІЛЬКИ оболонка/картка. НЕ змінюємо .gallery-slider/.item/img (Shopware ratio-box). */
+
+html.is-ctl-product .product-detail-media,
+.is-ctl-product .product-detail-media {
+  background:
+    radial-gradient(circle at 0 0, rgba(255,255,255,0.85), transparent 55%),
+    radial-gradient(circle at 100% 100%, rgba(255,255,255,0.9), transparent 55%),
+    rgba(255,255,255,0.94) !important;
+  border-radius: 22px !important;
+  padding: 1.1rem 1.2rem 1.15rem !important;
+  box-shadow: 0 20px 52px rgba(80, 52, 30, 0.26) !important;
+  border: 1px solid rgba(80, 60, 40, 0.16) !important;
+
+  max-width: 520px !important;
+  width: 100% !important;
+  justify-self: center !important;
+
+  overflow: hidden !important; /* важливо для rounded */
+}
+
+/* thumbnails — можна, це не ламає ratio-box */
+html.is-ctl-product .gallery-slider-thumbnails,
+.is-ctl-product .gallery-slider-thumbnails {
+  margin-top: 0.85rem !important;
+  gap: 0.55rem !important;
+}
+
+html.is-ctl-product .gallery-slider-thumbnails-item,
+.is-ctl-product .gallery-slider-thumbnails-item {
+  border-radius: 11px !important;
+  overflow: hidden !important;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12) !important;
+}
+
+/* ---- 7.4) ПРАВА КОЛОНКА – BUYBOX ---- */
+
+html.is-ctl-product .product-detail-buy,
+.is-ctl-product .product-detail-buy {
+  background:
+    radial-gradient(circle at 0 0, rgba(255,255,255,0.95), transparent 55%),
+    radial-gradient(circle at 100% 100%, rgba(255,255,255,0.98), transparent 55%),
+    linear-gradient(135deg, #fdf6ed, #f0dcc1) !important;
+  border-radius: var(--rs-radius-lg, 22px) !important;
+  box-shadow: var(--rs-shadow-soft, 0 18px 44px rgba(80,52,30,0.22)) !important;
+  padding: 1.65rem 1.8rem 1.9rem !important;
+  border: 1px solid rgba(80,52,30,0.18) !important;
+  justify-self: center !important;
+}
+
+html.is-ctl-product .product-detail-buy > * + *,
+.is-ctl-product .product-detail-buy > * + * {
+  margin-top: 0.9rem !important;
+}
+
+/* Ціна */
+html.is-ctl-product .product-detail-price,
+.is-ctl-product .product-detail-price {
+  font-family: var(--rs-font-serif) !important;
+  font-size: 1.7rem !important;
+  font-weight: 600 !important;
+  color: #2c1f15 !important;
+  margin-bottom: 0.25rem !important;
+}
+
+/* MwSt., Versand, Artikelnummer, Lieferzeit */
+html.is-ctl-product .product-detail-tax,
+html.is-ctl-product .product-detail-delivery-information,
+html.is-ctl-product .product-detail-ordernumber,
+html.is-ctl-product .product-detail-delivery,
+.is-ctl-product .product-detail-tax,
+.is-ctl-product .product-detail-delivery-information,
+.is-ctl-product .product-detail-ordernumber,
+.is-ctl-product .product-detail-delivery {
+  font-size: 0.9rem !important;
+  color: var(--rs-text-muted) !important;
+}
+
+/* Lieferzeit badge */
+html.is-ctl-product .product-detail-delivery .badge,
+html.is-ctl-product .product-detail-delivery span[class*="badge"],
+.is-ctl-product .product-detail-delivery .badge,
+.is-ctl-product .product-detail-delivery span[class*="badge"] {
+  background: rgba(46,160,67,0.12) !important;
+  color: #1d7a36 !important;
+  border-radius: 999px !important;
+  padding: 0.14rem 0.75rem !important;
+  font-size: 0.78rem !important;
+}
+
+/* ---- 7.5) КОНФІГУРАТОР ---- */
+
+html.is-ctl-product .product-detail-configurator,
+.is-ctl-product .product-detail-configurator {
+  margin-top: 1.1rem !important;
+  padding: 0.95rem 1.05rem 1.1rem !important;
+  border-radius: 18px !important;
+  background: rgba(255,255,255,0.96) !important;
+  border: 1px solid var(--rs-border-subtle, rgba(80,60,40,0.18)) !important;
+  box-shadow: 0 12px 30px rgba(80,52,30,0.18) !important;
+}
+
+html.is-ctl-product .product-detail-configurator-group + .product-detail-configurator-group,
+.is-ctl-product .product-detail-configurator-group + .product-detail-configurator-group {
+  margin-top: 0.75rem !important;
+}
+
+html.is-ctl-product .product-detail-configurator .form-label,
+html.is-ctl-product .product-detail-configurator label,
+.is-ctl-product .product-detail-configurator .form-label,
+.is-ctl-product .product-detail-configurator label {
+  display: block !important;
+  font-size: 0.78rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.16em !important;
+  color: var(--rs-text-muted) !important;
+  margin-bottom: 0.25rem !important;
+}
+
+html.is-ctl-product .product-detail-configurator select,
+.is-ctl-product .product-detail-configurator select {
+  width: 100% !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(80,60,40,0.32) !important;
+  background: linear-gradient(135deg,#fff9f2,#f4e0c7) !important;
+  box-shadow: 0 8px 22px rgba(80,52,30,0.22) !important;
+  padding: 0.52rem 2.4rem 0.52rem 1.05rem !important;
+  font-size: 0.93rem !important;
+  color: var(--rs-text-main, #2c1f15) !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+}
+
+/* [TODO-CLEANUP #3] ВИРІШЕНО: стилі для .rs-variant-pill / -row / -hidden / свотчі
+   тепер у секції 9 (нижче). JS ховає select лише якщо pill-кнопки створились. */
+
+/* ---- 7.6) КІЛЬКІСТЬ + IN DEN WARENKORB + PAYPAL ---- */
+
+/* блок buy-widget всередині buybox */
+html.is-ctl-product .product-detail-buy .buy-widget-container,
+.is-ctl-product .product-detail-buy .buy-widget-container {
+  max-width: 520px !important;
+  margin: 1.1rem auto 0 !important;
+}
+
+html.is-ctl-product .product-detail-buy .buy-widget-container .row,
+.is-ctl-product .product-detail-buy .buy-widget-container .row {
+  align-items: stretch !important;
+  column-gap: 0.9rem !important;
+}
+
+/* fieldset з кількістю (col-4 d-flex justify-content-end) */
+html.is-ctl-product .product-detail-buy fieldset.col-4.d-flex.justify-content-end,
+.is-ctl-product .product-detail-buy fieldset.col-4.d-flex.justify-content-end {
+  justify-content: flex-start !important;
+}
+
+/* капсула кількості */
+html.is-ctl-product .product-detail-buy .product-detail-quantity-group.quantity-selector-group,
+.is-ctl-product .product-detail-buy .product-detail-quantity-group.quantity-selector-group {
+  display: flex !important;
+  align-items: stretch !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(80,60,40,0.3) !important;
+  background: linear-gradient(135deg,#fff9f2,#f4e0c7) !important;
+  box-shadow: 0 8px 22px rgba(80,52,30,0.22) !important;
+  height: 44px !important;
+  max-width: 210px !important;
+}
+
+/* кнопки +/- */
+html.is-ctl-product .product-detail-buy .product-detail-quantity-group .btn,
+.is-ctl-product .product-detail-buy .product-detail-quantity-group .btn {
+  border: none !important;
+  border-radius: 0 !important;
+  min-width: 40px !important;
+  height: 44px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  line-height: 1 !important;
+  background: rgba(255,255,255,0.1) !important;
+}
+
+/* контейнер іконки */
+html.is-ctl-product .product-detail-buy .product-detail-quantity-group .icon,
+.is-ctl-product .product-detail-buy .product-detail-quantity-group .icon {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* svg – по центру */
+html.is-ctl-product .product-detail-buy .product-detail-quantity-group .icon svg,
+.is-ctl-product .product-detail-buy .product-detail-quantity-group .icon svg {
+  display: block !important;
+  vertical-align: middle !important;
+  width: 16px !important;
+  height: 16px !important;
+}
+
+/* колір іконок */
+html.is-ctl-product .product-detail-buy .product-detail-quantity-group .icon svg use,
+.is-ctl-product .product-detail-buy .product-detail-quantity-group .icon svg use {
+  fill: #555555 !important;
+}
+
+/* input type="number" всередині капсули */
+html.is-ctl-product .product-detail-buy .product-detail-quantity-group-input,
+html.is-ctl-product .product-detail-buy .product-detail-quantity-group .quantity-selector-group-input,
+.is-ctl-product .product-detail-buy .product-detail-quantity-group-input,
+.is-ctl-product .product-detail-buy .product-detail-quantity-group .quantity-selector-group-input {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  width: 70px !important;
+  max-width: 70px !important;
+  text-align: center !important;
+  font-weight: 500 !important;
+  font-size: 0.95rem !important;
+  padding: 0 !important;
+}
+
+/* прибираємо спінери */
+html.is-ctl-product .product-detail-buy .product-detail-quantity-group-input::-webkit-outer-spin-button,
+html.is-ctl-product .product-detail-buy .product-detail-quantity-group-input::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0 !important;
+}
+
+html.is-ctl-product .product-detail-buy .product-detail-quantity-group-input[type="number"] {
+  -moz-appearance: textfield !important;
+}
+
+/* кнопка In den Warenkorb – full-width всередині коридору */
+html.is-ctl-product .product-detail-buy .btn-buy,
+html.is-ctl-product .product-detail-buy button.btn-primary,
+.is-ctl-product .product-detail-buy .btn-buy,
+.is-ctl-product .product-detail-buy button.btn-primary {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.45rem !important;
+  padding: 0.9rem 2rem !important;
+  border-radius: var(--rs-radius-pill, 999px) !important;
+  border: 1px solid rgba(80,52,30,0.3) !important;
+  background: linear-gradient(135deg,#fdf6ed,#f0dcc1) !important;
+  box-shadow: 0 12px 32px rgba(80,52,30,0.26) !important;
+  font-weight: 600 !important;
+  font-size: 0.95rem !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  color: var(--rs-text-main, #2c1f15) !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease !important;
+
+  width: 100% !important;
+  max-width: 520px !important;
+  margin: 0 auto !important;
+}
+
+html.is-ctl-product .product-detail-buy .btn-buy:hover,
+html.is-ctl-product .product-detail-buy button.btn-primary:hover,
+.is-ctl-product .product-detail-buy .btn-buy:hover,
+.is-ctl-product .product-detail-buy button.btn-primary:hover {
+  transform: translateY(-1px) !important;
+  background: linear-gradient(135deg,#fff9f2,#f4e0c7) !important;
+  box-shadow: 0 18px 42px rgba(80,52,30,0.3) !important;
+}
+
+/* PayPal / Später bezahlen – стек під основною кнопкою */
+html.is-ctl-product .product-detail-payments,
+.is-ctl-product .product-detail-payments {
+  max-width: 520px !important;
+  margin: 1rem auto 0 !important;
+}
+
+html.is-ctl-product .product-detail-payments > * {
+  width: 100% !important;
+}
+
+html.is-ctl-product .product-detail-payments .btn,
+html.is-ctl-product .product-detail-payments button,
+.is-ctl-product .product-detail-payments .btn,
+.is-ctl-product .product-detail-payments button {
+  border-radius: var(--rs-radius-pill, 999px) !important;
+  font-weight: 600 !important;
+}
+
+/* ---- 7.7) ТАБИ ОПИСУ ---- */
+
+html.is-ctl-product .product-detail-tabs,
+.is-ctl-product .product-detail-tabs {
+  max-width: 1100px !important;
+  margin: 2.6rem auto 0 !important;
+}
+
+html.is-ctl-product .product-detail-tabs .nav-tabs,
+.is-ctl-product .product-detail-tabs .nav-tabs {
+  border-bottom: 0 !important;
+  display: flex !important;
+  gap: 0.55rem !important;
+  flex-wrap: wrap !important;
+}
+
+html.is-ctl-product .product-detail-tabs .nav-tabs .nav-link,
+.is-ctl-product .product-detail-tabs .nav-tabs .nav-link {
+  border-radius: 999px !important;
+  border: 1px solid rgba(80,60,40,0.18) !important;
+  background: rgba(255,255,255,0.92) !important;
+  padding: 0.45rem 1.1rem !important;
+  font-size: 0.86rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.14em !important;
+  color: var(--rs-text-muted) !important;
+  transition: background 0.16s ease, color 0.16s ease, box-shadow 0.16s ease !important;
+}
+
+html.is-ctl-product .product-detail-tabs .nav-tabs .nav-link.active,
+.is-ctl-product .product-detail-tabs .nav-tabs .nav-link.active {
+  background: linear-gradient(135deg,#f0dcc1,#e1c19c) !important;
+  color: var(--rs-text-main, #2c1f15) !important;
+  box-shadow: 0 10px 28px rgba(80,52,30,0.26) !important;
+}
+
+html.is-ctl-product .product-detail-tabs .tab-content,
+.is-ctl-product .product-detail-tabs .tab-content {
+  margin-top: 1.4rem !important;
+  background: rgba(255,255,255,0.95) !important;
+  border-radius: 18px !important;
+  padding: 1.6rem 1.8rem !important;
+  box-shadow: 0 16px 40px rgba(80,52,30,0.2) !important;
+  border: 1px solid rgba(80,60,40,0.12) !important;
+}
+
+/* ---- 7.8) РЕСПОНСИВ (product detail) ---- */
+
+@media (max-width: 1024px) {
+  html.is-ctl-product .product-detail-main,
+  .is-ctl-product .product-detail-main {
+    grid-template-columns: minmax(0,1fr) !important;
+    gap: 1.9rem !important;
+  }
+
+  html.is-ctl-product .product-detail-media,
+  .is-ctl-product .product-detail-media {
+    max-width: 100% !important;
+    margin: 0 auto !important;
+  }
+
+  html.is-ctl-product .product-detail-buy,
+  .is-ctl-product .product-detail-buy {
+    padding: 1.5rem 1.4rem 1.6rem !important;
+  }
+}
+
+@media (max-width: 640px) {
+  html.is-ctl-product .product-detail,
+  .is-ctl-product .product-detail {
+    padding: 0 12px !important;
+    max-width: 100% !important;
+  }
+
+  /* кількість + кнопка в колонку */
+  html.is-ctl-product .product-detail-buy .buy-widget-container .row,
+  .is-ctl-product .product-detail-buy .buy-widget-container .row {
+    flex-direction: column-reverse !important; /* кнопка зверху, кількість під нею */
+  }
+
+  html.is-ctl-product .product-detail-buy .product-detail-quantity-group.quantity-selector-group,
+  .is-ctl-product .product-detail-buy .product-detail-quantity-group.quantity-selector-group {
+    max-width: 100% !important;
+  }
+
+  /* outer corridor padding на мобілці */
+  body.is-ctl-product .content-main > .container,
+  body.is-ctl-product .content-main .container,
+  body.is-ctl-product .cms-page,
+  body.is-ctl-product .cms-section .boxed,
+  body.is-ctl-product .product-detail,
+  body.is-ctl-product .product-detail-main,
+  body.is-ctl-product .product-detail-tabs,
+  body.is-ctl-product .product-detail-headline,
+  body.is-ctl-product .breadcrumb {
+    max-width: 100% !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+}
+
+/* =========================================================
+   8) PRODUCT DETAIL — ALIGN + MEDIA / GALLERY
+   [TODO-CLEANUP #1] Нижче ТРИ послідовні блоки про галерею, що конфліктують
+   (height-fix → max-height/crop → contain/no-crop). Зараз виграє останній.
+   НІЧОГО НЕ ВИДАЛЕНО до уточнення бажаного вигляду галереї.
+   ========================================================= */
+
+/* ---- 8a) ALIGN + MEDIA HEIGHT FIX ---- */
+
+/* синхронізація коридору верх (main) і низ (tabs) */
+body.is-ctl-product .product-detail-tabs,
+body.is-ctl-product .product-detail-tabs .nav-tabs,
+body.is-ctl-product .product-detail-tabs .tab-content {
+  max-width: 1100px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+body.is-ctl-product .product-detail-tabs {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+body.is-ctl-product .product-detail-tabs .tab-content {
+  width: 100% !important;
+}
+
+body.is-ctl-product .product-detail-tabs .container,
+body.is-ctl-product .product-detail-tabs .container-fluid {
+  max-width: 1100px !important;
+  padding-left: 18px !important;
+  padding-right: 18px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+body.is-ctl-product .product-detail-main {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* медіа-картка не тягнеться вниз порожнім блоком */
+body.is-ctl-product .product-detail-media {
+  padding-bottom: 1.05rem !important;
+  align-self: start !important;
+}
+
+body.is-ctl-product .product-detail-media .gallery-slider,
+body.is-ctl-product .product-detail-media .gallery-slider-container,
+body.is-ctl-product .product-detail-media .gallery-slider-wrapper,
+body.is-ctl-product .product-detail-media .tns-outer {
+  max-height: 520px !important;
+  overflow: hidden !important;
+  border-radius: 18px !important;
+}
+
+body.is-ctl-product .product-detail-media .cms-image-container,
+body.is-ctl-product .product-detail-media .gallery-slider-item-container,
+body.is-ctl-product .product-detail-media .gallery-slider-item {
+  padding-bottom: 0 !important;
+}
+
+@media (max-width: 1024px) {
+  body.is-ctl-product .product-detail-tabs .container,
+  body.is-ctl-product .product-detail-tabs .container-fluid {
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+  }
+
+  body.is-ctl-product .product-detail-media .gallery-slider,
+  body.is-ctl-product .product-detail-media .gallery-slider-container,
+  body.is-ctl-product .product-detail-media .gallery-slider-wrapper,
+  body.is-ctl-product .product-detail-media .tns-outer {
+    max-height: 70vh !important;
+  }
+}
+
+@media (max-width: 640px) {
+  body.is-ctl-product .product-detail-tabs .container,
+  body.is-ctl-product .product-detail-tabs .container-fluid {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+}
+
+/* ---- 8b) PRODUCT GALLERY: NO CROP (contain) ---- */
+
+body.is-ctl-product .product-detail-media {
+  overflow: hidden !important;
+}
+
+/* 1) Забираємо cover-логіку в контейнерах теми/Shopware */
+body.is-ctl-product .product-detail-media .cms-image-container.is-cover,
+body.is-ctl-product .product-detail-media .cms-image-container,
+body.is-ctl-product .product-detail-media .gallery-slider-item-container,
+body.is-ctl-product .product-detail-media .gallery-slider-item,
+body.is-ctl-product .product-detail-media picture,
+body.is-ctl-product .product-detail-media .gallery-slider-image {
+  position: relative !important;
+}
+
+/* 2) КЛЮЧ: картинки/постери – тільки contain, без обрізання */
+body.is-ctl-product .product-detail-media img,
+body.is-ctl-product .product-detail-media picture img {
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 520px !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+  background: #fff !important;
+}
+
+/* 3) Стабільне "вікно" галереї */
+body.is-ctl-product .product-detail-media .gallery-slider,
+body.is-ctl-product .product-detail-media .gallery-slider-container,
+body.is-ctl-product .product-detail-media .gallery-slider-wrapper,
+body.is-ctl-product .product-detail-media .tns-outer,
+body.is-ctl-product .product-detail-media .tns-inner {
+  max-height: 520px !important;
+  height: 520px !important;
+  overflow: hidden !important;
+}
+
+/* 4) На мобілці — адаптивна висота */
+@media (max-width: 1024px) {
+  body.is-ctl-product .product-detail-media .gallery-slider,
+  body.is-ctl-product .product-detail-media .gallery-slider-container,
+  body.is-ctl-product .product-detail-media .gallery-slider-wrapper,
+  body.is-ctl-product .product-detail-media .tns-outer,
+  body.is-ctl-product .product-detail-media .tns-inner {
+    height: min(70vh, 520px) !important;
+    max-height: min(70vh, 520px) !important;
+  }
+
+  body.is-ctl-product .product-detail-media img,
+  body.is-ctl-product .product-detail-media picture img {
+    max-height: min(70vh, 520px) !important;
+  }
+}
+
+/* ---- 8c) ОДИН коридор на всю сторінку продукту (фінальний дубль) ---- */
+/* [TODO-CLEANUP #2] дублює 7.0 — звести до одного. */
+
+body.is-ctl-product .content-main > .container,
+body.is-ctl-product .content-main .container {
+  max-width: 1100px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 18px !important;
+  padding-right: 18px !important;
+}
+
+body.is-ctl-product .product-detail,
+body.is-ctl-product .product-detail-main,
+body.is-ctl-product .product-detail-tabs,
+body.is-ctl-product .product-detail-headline,
+body.is-ctl-product .breadcrumb {
+  max-width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+body.is-ctl-product .product-detail-tabs .container,
+body.is-ctl-product .product-detail-tabs .container-fluid,
+body.is-ctl-product .product-detail-tabs .cms-section .boxed,
+body.is-ctl-product .product-detail-tabs .cms-block-container,
+body.is-ctl-product .product-detail-tabs .cms-block-container-row {
+  max-width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+body.is-ctl-product .product-detail-tabs .row {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+body.is-ctl-product .product-detail-tabs .row > * {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+body.is-ctl-product .product-detail-tabs .tab-content {
+  width: 100% !important;
+}
+
+@media (max-width: 640px) {
+  body.is-ctl-product .content-main > .container,
+  body.is-ctl-product .content-main .container {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+}
+
+/* =========================================================
+   9) PRODUCT DETAIL — HARMONIZE v3
+   - 9a) свотчі / pill варіантів (Farbe)
+   - 9b) картки крос-селінгу та "Ähnliche Artikel" у стилі сайту
+   - 9c) стискання картки опису (прибрати порожнечу)
+   Усе scoped під .is-ctl-product (каталог не зачіпається).
+   ========================================================= */
+
+/* ---- 9a) ВАРІАНТИ: pill-кнопки + кольорові свотчі ---- */
+
+/* прихований оригінальний select (тільки коли pill створились) */
+.is-ctl-product select.rs-variant-hidden {
+  display: none !important;
+}
+
+.is-ctl-product .rs-variant-pill-row {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 0.55rem !important;
+  margin-top: 0.35rem !important;
+}
+
+.is-ctl-product .rs-variant-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  padding: 0.5rem 1rem !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(80, 60, 40, 0.3) !important;
+  background: rgba(255, 255, 255, 0.92) !important;
+  color: var(--rs-text-main, #3c2b1c) !important;
+  font-size: 0.88rem !important;
+  line-height: 1.1 !important;
+  cursor: pointer !important;
+  box-shadow: 0 6px 16px rgba(80, 52, 30, 0.14) !important;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease,
+    border-color 0.16s ease !important;
+}
+
+.is-ctl-product .rs-variant-pill:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 10px 24px rgba(80, 52, 30, 0.2) !important;
+  background: rgba(255, 255, 255, 0.98) !important;
+}
+
+.is-ctl-product .rs-variant-pill.is-active {
+  background: linear-gradient(135deg, #f0dcc1, #e1c19c) !important;
+  border-color: var(--rs-accent, #b7773d) !important;
+  box-shadow: 0 10px 26px rgba(80, 52, 30, 0.26) !important;
+  font-weight: 600 !important;
+}
+
+.is-ctl-product .rs-variant-pill.is-disabled {
+  opacity: 0.4 !important;
+  cursor: not-allowed !important;
+  text-decoration: line-through !important;
+}
+
+/* кольоровий кружечок-свотч */
+.is-ctl-product .rs-variant-pill__dot {
+  width: 18px !important;
+  height: 18px !important;
+  border-radius: 50% !important;
+  border: 1px solid rgba(0, 0, 0, 0.2) !important;
+  flex: 0 0 auto !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35) !important;
+}
+
+.is-ctl-product .rs-variant-pill.is-active .rs-variant-pill__dot {
+  outline: 2px solid var(--rs-accent, #b7773d) !important;
+  outline-offset: 2px !important;
+}
+
+/* ---- 9b) КАРТКИ КРОС-СЕЛІНГУ / СХОЖИХ ТОВАРІВ ---- */
+
+/* заголовки секцій ("Kunden haben auch gesehen", "Ähnliche Artikel") */
+.is-ctl-product .product-detail-tabs ~ * .product-slider-headline,
+.is-ctl-product .cms-element-product-slider .product-slider-headline,
+.is-ctl-product .product-cross-selling-tab-title,
+.is-ctl-product .product-detail-cross-selling .product-slider-headline,
+.is-ctl-product .product-slider-container .product-slider-headline {
+  font-family: var(--rs-font-serif) !important;
+  letter-spacing: 0.03em !important;
+  text-transform: uppercase !important;
+  color: #2c1f15 !important;
+}
+
+/* самі картки */
+.is-ctl-product .product-box,
+.is-ctl-product .cms-element-product-slider .product-box,
+.is-ctl-product .product-slider .product-box {
+  background: rgba(255, 255, 255, 0.96) !important;
+  border: 1px solid rgba(80, 60, 40, 0.14) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 10px 26px rgba(80, 52, 30, 0.16) !important;
+  overflow: hidden !important;
+  transition: transform 0.18s ease, box-shadow 0.18s ease !important;
+}
+
+.is-ctl-product .product-box:hover,
+.is-ctl-product .cms-element-product-slider .product-box:hover,
+.is-ctl-product .product-slider .product-box:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 18px 36px rgba(80, 52, 30, 0.22) !important;
+}
+
+/* прибираємо подвійні рамки/тіні всередині картки */
+.is-ctl-product .product-box .card,
+.is-ctl-product .product-box .card-body {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* назва товару */
+.is-ctl-product .product-box .product-name {
+  font-family: var(--rs-font-serif) !important;
+  color: #2c1f15 !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* ціна — акцентом */
+.is-ctl-product .product-box .product-price,
+.is-ctl-product .product-box .product-price-info .product-price {
+  font-family: var(--rs-font-serif) !important;
+  font-weight: 600 !important;
+  color: var(--rs-accent, #b7773d) !important;
+}
+
+/* "TIPP!" бейдж — у тон теми */
+.is-ctl-product .product-box .product-badges .badge,
+.is-ctl-product .product-box .badge {
+  border-radius: 999px !important;
+}
+
+/* ---- 9c) КАРТКА ОПИСУ: висота під контент ---- */
+
+.is-ctl-product .product-detail-tabs .tab-pane,
+.is-ctl-product .product-detail-tabs .tab-content,
+.is-ctl-product .product-detail-description,
+.is-ctl-product .product-detail-description-text {
+  min-height: 0 !important;
+  height: auto !important;
+}
+
+/* типографіка опису */
+.is-ctl-product .product-detail-description-text {
+  font-size: 0.95rem !important;
+  line-height: 1.7 !important;
+  color: var(--rs-text-main, #3c2b1c) !important;
+}
+
+.is-ctl-product .product-detail-description-title {
+  font-family: var(--rs-font-serif) !important;
+  color: #2c1f15 !important;
+}
