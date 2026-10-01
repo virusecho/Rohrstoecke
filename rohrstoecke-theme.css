@@ -2252,8 +2252,9 @@ body.is-ctl-product .product-detail-tabs .tab-content {
   width: 100% !important;
 }
 
-/* 10.2) Однакова висота карток: дію притискаємо до низу */
-.rs-wood .cms-element-product-listing .product-box .card-body,
+/* 10.2) Однакова висота звичайних карток. List-layout пошуку має власний
+   горизонтальний .card-body; примусовий column ламав його на всю ширину. */
+.rs-wood .cms-element-product-listing .product-box:not(.box-list-layout) .card-body,
 .rs-wood .cms-element-product-slider .product-box .card-body {
   display: flex !important;
   flex-direction: column !important;
