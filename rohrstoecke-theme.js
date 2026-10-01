@@ -40,6 +40,65 @@ console.log("%cRohrstöcke theme JS v5 (product-stable)", "color:#b7773d;font-we
   }
 })();
 
+/* Search: mobile filter access and clear actions for variant products. */
+(function () {
+  function setupSearchFilters() {
+    if (!document.body.classList.contains('is-ctl-search')) return;
+
+    var search = document.querySelector('.search-page');
+    var panel = search && search.querySelector('.filter-panel-wrapper');
+    if (!panel) return;
+    panel.id = panel.id || 'rs-search-filters';
+    if (panel.previousElementSibling?.classList.contains('rs-search-filter-toggle')) return;
+
+    var toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'rs-search-filter-toggle';
+    toggle.textContent = 'Filter anzeigen';
+    toggle.setAttribute('aria-controls', panel.id);
+    toggle.setAttribute('aria-expanded', 'false');
+    panel.parentNode.insertBefore(toggle, panel);
+
+    toggle.addEventListener('click', function () {
+      var currentPanel = toggle.nextElementSibling;
+      if (!currentPanel) return;
+      var open = currentPanel.classList.toggle('rs-search-filter-open');
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.textContent = open ? 'Filter schließen' : 'Filter anzeigen';
+    });
+  }
+
+  function labelVariantActions() {
+    document.querySelectorAll('.search-page .cms-element-product-listing .product-box').forEach(function (card) {
+      if (!card.querySelector('.swp-search-main-products-variant-hint')) return;
+      var link = card.querySelector('.product-action a.btn-detail');
+      if (link && !link.dataset.rsVariantAction) {
+        link.textContent = 'Varianten wählen';
+        link.dataset.rsVariantAction = '1';
+      }
+    });
+  }
+
+  function updateSearchUi() {
+    setupSearchFilters();
+    labelVariantActions();
+  }
+
+  function initSearchFilters() {
+    updateSearchUi();
+    var search = document.querySelector('.search-page');
+    if (search && 'MutationObserver' in window) {
+      new MutationObserver(updateSearchUi).observe(search, { childList: true, subtree: true });
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSearchFilters);
+  } else {
+    initSearchFilters();
+  }
+})();
+
 /* ========== 2) RS HEADER OVERRIDE (новий хедер + перенос меню/іконок/пошуку + ACRIS Vorschau) ========== */
 (function () {
   var LOGO_URL =

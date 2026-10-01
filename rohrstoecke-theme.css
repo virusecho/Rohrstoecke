@@ -3096,3 +3096,435 @@ body.is-ctl-product .product-box .product-wishlist,
 body.is-ctl-product .product-box .product-quickview {
   display: none !important;
 }
+
+/* =========================================================
+   13) SEARCH RESULTS — match the wood theme's catalog cards
+   Scope every rule to the search page. The search plugin emits
+   box-list-layout cards; only their presentation is changed here.
+   ========================================================= */
+html.rs-wood body.is-ctl-search .search-page {
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+}
+
+html.rs-wood body.is-ctl-search .search-page .search-headline {
+  margin: 0 0 34px;
+  padding: 26px 32px 28px;
+  border: 1px solid rgba(137, 94, 52, 0.16);
+  border-radius: 22px;
+  background: linear-gradient(125deg, #fffdf9 0%, #f5e9d8 100%);
+  box-shadow: 0 16px 36px rgba(83, 54, 27, 0.09);
+  color: #2c1f15;
+  font-family: var(--rs-font-serif);
+  font-size: clamp(1.65rem, 2.2vw, 2.15rem);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+html.rs-wood body.is-ctl-search .search-page .search-headline::before {
+  content: "SUCHE";
+  display: block;
+  margin-bottom: 10px;
+  color: #9c6840;
+  font: 700 0.72rem/1.2 var(--rs-font-body);
+  letter-spacing: 0.18em;
+}
+
+html.rs-wood body.is-ctl-search .search-page .search-headline-count {
+  color: #9c5f2e;
+}
+
+html.rs-wood body.is-ctl-search .search-page .search-productSearchResult,
+html.rs-wood body.is-ctl-search .search-page .search-categorySearchResult {
+  margin: 0 0 56px !important;
+}
+
+html.rs-wood body.is-ctl-search .search-page .search-result-title {
+  margin: 0 0 20px;
+  color: #2c1f15;
+  font-family: var(--rs-font-serif);
+  font-size: clamp(1.45rem, 2vw, 1.8rem);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+html.rs-wood body.is-ctl-search .search-page .search-result-title::after {
+  content: "";
+  display: block;
+  width: 48px;
+  height: 3px;
+  margin-top: 12px;
+  border-radius: 99px;
+  background: #b7773d;
+}
+
+/* Filters stay in their native dropdowns and retain all Shopware behavior. */
+html.rs-wood body.is-ctl-search .search-page .filter-panel-wrapper {
+  margin-bottom: 22px;
+  padding: 18px 20px 14px;
+  border: 1px solid rgba(137, 94, 52, 0.14);
+  border-radius: 20px;
+  background: #fbf6ef;
+  box-shadow: 0 10px 28px rgba(83, 54, 27, 0.06);
+}
+
+html.rs-wood body.is-ctl-search .search-page .filter-panel-items-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+html.rs-wood body.is-ctl-search .search-page .filter-panel-item {
+  margin: 0 !important;
+}
+
+html.rs-wood body.is-ctl-search .search-page .filter-panel-item-toggle {
+  min-height: 38px;
+  padding: 7px 13px;
+  border: 1px solid #e6d8c6;
+  border-radius: 999px;
+  background: #fffdf9;
+  color: #493426;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: none;
+}
+
+html.rs-wood body.is-ctl-search .search-page .filter-panel-item-toggle:hover,
+html.rs-wood body.is-ctl-search .search-page .filter-panel-item-toggle:focus-visible,
+html.rs-wood body.is-ctl-search .search-page .filter-panel-item.show .filter-panel-item-toggle {
+  border-color: #b7773d;
+  background: #f5e7d5;
+  color: #2c1f15;
+}
+
+html.rs-wood body.is-ctl-search .search-page .cms-element-product-listing-actions {
+  align-items: center;
+  margin: 0 0 18px !important;
+}
+
+html.rs-wood body.is-ctl-search .search-page .cms-element-product-listing-actions > .col-md-auto:last-child {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
+html.rs-wood body.is-ctl-search .search-page .cms-element-product-listing-actions > .col-md-auto:last-child::before {
+  content: "SORTIEREN NACH";
+  color: #806d5b;
+  font-size: 0.69rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  white-space: nowrap;
+}
+
+html.rs-wood body.is-ctl-search .search-page select.sorting.form-select {
+  min-width: 196px;
+  min-height: 40px;
+  border: 1px solid #e7dacb;
+  border-radius: 999px;
+  background-color: #fffdf9;
+  color: #493426;
+  font-size: 0.86rem;
+  box-shadow: 0 6px 18px rgba(83, 54, 27, 0.08);
+}
+
+/* The search plugin supplies one full-width column per item. */
+html.rs-wood body.is-ctl-search .search-page .cms-element-product-listing .cms-listing-row {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+  margin: 0 !important;
+}
+
+html.rs-wood body.is-ctl-search .search-page .cms-element-product-listing .cms-listing-col {
+  width: auto !important;
+  max-width: none !important;
+  min-width: 0;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html.rs-wood body.is-ctl-search .search-page .cms-element-product-listing .product-box {
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid rgba(115, 76, 37, 0.16) !important;
+  border-radius: 18px !important;
+  background: linear-gradient(155deg, #fff 47%, #f6e8d5 100%) !important;
+  box-shadow: 0 14px 30px rgba(83, 54, 27, 0.1);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+html.rs-wood body.is-ctl-search .search-page .cms-element-product-listing .product-box:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 36px rgba(83, 54, 27, 0.16);
+}
+
+html.rs-wood body.is-ctl-search .search-page .cms-element-product-listing .product-box .card-body {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100%;
+  padding: 10px !important;
+}
+
+html.rs-wood body.is-ctl-search .search-page .cms-element-product-listing .product-badges {
+  position: absolute;
+  z-index: 2;
+  top: 16px;
+  left: 16px;
+}
+
+html.rs-wood body.is-ctl-search .search-page .cms-element-product-listing .product-image-wrapper {
+  display: flex !important;
+  flex: 0 0 220px !important;
+  align-items: center;
+  justify-content: center;
+  width: 100% !important;
+  height: 220px !important;
+  margin: 0 !important;
+  padding: 14px !important;
+  border-radius: 13px;
+  background: #fbf7f1;
+}
+
+html.rs-wood body.is-ctl-search .search-page .cms-element-product-listing .product-image {
+  width: auto !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+}
+
+html.rs-wood body.is-ctl-search .search-page .cms-element-product-listing .product-info {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  flex-direction: column !important;
+  min-width: 0;
+  width: 100% !important;
+  padding: 16px 9px 8px !important;
+}
+
+html.rs-wood body.is-ctl-search .search-page .cms-element-product-listing .product-name {
+  display: -webkit-box !important;
+  min-height: 3.65em;
+  margin: 0 0 9px !important;
+  overflow: hidden;
+  color: #2c1f15 !important;
+  font-family: var(--rs-font-serif);
+  font-size: 1.02rem;
+  font-weight: 600;
+  line-height: 1.22;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+html.rs-wood body.is-ctl-search .search-page .cms-element-product-listing .product-number {
+  margin: 0 0 8px;
+  color: #8b7a69 !important;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+}
+
+html.rs-wood body.is-ctl-search .search-page .cms-element-product-listing .swp-search-main-products-variant-hint {
+  align-self: flex-start;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 0 10px !important;
+  padding: 5px 9px;
+  border: 1px solid #e4c9a6;
+  border-radius: 999px;
+  background: #f5e6d0;
+  color: #674526 !important;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+html.rs-wood body.is-ctl-search .search-page .cms-element-product-listing .product-description {
+  display: -webkit-box !important;
+  height: auto !important;
+  max-height: none !important;
+  margin: 0 0 14px !important;
+  overflow: hidden;
+  color: #75685b;
+  font-size: 0.83rem;
+  line-height: 1.5;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+html.rs-wood body.is-ctl-search .search-page .cms-element-product-listing .product-price-details {
+  margin-top: auto;
+  color: #827363;
+  font-size: 0.75rem;
+}
+
+html.rs-wood body.is-ctl-search .search-page .cms-element-product-listing .product-price-info {
+  flex: 0 0 auto !important;
+  margin: 7px 0 0;
+  color: #2c1f15;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+html.rs-wood body.is-ctl-search .search-page .cms-element-product-listing .product-price {
+  color: #2c1f15;
+  font-size: 1.12rem;
+  font-weight: 700;
+}
+
+html.rs-wood body.is-ctl-search .search-page .cms-element-product-listing .product-price-tax-link {
+  padding: 0;
+  color: #8b7a69;
+  font-size: 0.68rem !important;
+  font-weight: 400;
+  line-height: 1.3;
+  text-align: left;
+}
+
+html.rs-wood body.is-ctl-search .search-page .cms-element-product-listing .product-action {
+  margin: 12px 0 0 !important;
+  padding: 0 !important;
+}
+
+html.rs-wood body.is-ctl-search .search-page .cms-element-product-listing .product-action .btn {
+  min-height: 40px;
+  border: 1px solid #ddc9b0 !important;
+  border-radius: 999px !important;
+  background: #fffdf9 !important;
+  color: #503720 !important;
+  font-size: 0.73rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+html.rs-wood body.is-ctl-search .search-page .cms-element-product-listing .product-action .btn:hover {
+  border-color: #b7773d !important;
+  background: #b7773d !important;
+  color: #fff !important;
+}
+
+html.rs-wood body.is-ctl-search .search-page .search-categorySearchResult .entity-box {
+  height: 100%;
+  border: 1px solid rgba(115, 76, 37, 0.16);
+  border-radius: 15px;
+  background: #fffdf9;
+  box-shadow: 0 10px 25px rgba(83, 54, 27, 0.07);
+}
+
+html.rs-wood body.is-ctl-search .search-page .search-categorySearchResult .entity-box .product-name {
+  min-height: 0 !important;
+  margin: 0 !important;
+  color: #3c2b1c;
+  font-family: var(--rs-font-serif);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+html.rs-wood body.is-ctl-search .search-page .search-categorySearchResult .entity-box .card-body {
+  padding: 18px !important;
+}
+
+html.rs-wood body.is-ctl-search .search-page .search-categorySearchResult .entity-box .product-description {
+  display: -webkit-box;
+  height: auto !important;
+  max-height: none !important;
+  margin: 9px 0 0 !important;
+  overflow: hidden;
+  color: #7b6c5d;
+  font-size: 0.81rem;
+  line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+html.rs-wood body.is-ctl-search .search-page .rs-search-filter-toggle {
+  display: none;
+}
+
+@media (max-width: 1120px) {
+  html.rs-wood body.is-ctl-search .search-page .cms-element-product-listing .cms-listing-row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 780px) {
+  html.rs-wood body.is-ctl-search .search-page {
+    padding: 24px 16px 60px;
+  }
+
+  html.rs-wood body.is-ctl-search .search-page .rs-search-filter-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-height: 44px;
+    margin: 0 0 12px;
+    padding: 10px 16px;
+    border: 1px solid #e4d3bf;
+    border-radius: 999px;
+    background: #fffaf3;
+    color: #4c3522;
+    font-size: 0.85rem;
+    font-weight: 700;
+    box-shadow: 0 7px 18px rgba(83, 54, 27, 0.08);
+  }
+
+  html.rs-wood body.is-ctl-search .search-page .rs-search-filter-toggle::after {
+    content: "+";
+    font-size: 1.3rem;
+    font-weight: 400;
+    line-height: 1;
+  }
+
+  html.rs-wood body.is-ctl-search .search-page .rs-search-filter-toggle[aria-expanded="true"]::after {
+    content: "−";
+  }
+
+  html.rs-wood body.is-ctl-search .search-page .filter-panel-wrapper {
+    display: block !important;
+  }
+
+  html.rs-wood body.is-ctl-search .search-page .rs-search-filter-toggle + .filter-panel-wrapper:not(.rs-search-filter-open) {
+    display: none !important;
+  }
+
+  html.rs-wood body.is-ctl-search .search-page .filter-panel-wrapper.rs-search-filter-open {
+    display: block !important;
+  }
+
+  html.rs-wood body.is-ctl-search .search-page .cms-element-product-listing .cms-listing-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  html.rs-wood body.is-ctl-search .search-page .cms-element-product-listing .product-image-wrapper {
+    flex-basis: 195px !important;
+    height: 195px !important;
+  }
+}
+
+@media (max-width: 540px) {
+  html.rs-wood body.is-ctl-search .search-page .search-headline {
+    padding: 20px;
+    font-size: 1.5rem;
+  }
+
+  html.rs-wood body.is-ctl-search .search-page .filter-panel-wrapper {
+    padding: 12px;
+  }
+
+  html.rs-wood body.is-ctl-search .search-page .cms-element-product-listing .cms-listing-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  html.rs-wood body.is-ctl-search .search-page .cms-element-product-listing-actions > .col-md-auto:last-child::before {
+    display: none;
+  }
+
+  html.rs-wood body.is-ctl-search .search-page select.sorting.form-select {
+    min-width: 0;
+  }
+}
