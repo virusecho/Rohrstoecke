@@ -3530,7 +3530,248 @@ html.rs-wood body.is-ctl-search .search-page .rs-search-filter-toggle {
 }
 
 /* =========================================
-   14) SHARED SHOP SERVICE PAGES
+   14) UNIVERSAL INFORMATION PAGE THEME
+   Shopware CMS content pages can share content with other storefronts.
+   Normalize their presentation only on Rohrstoecke, including future pages
+   built from the same CMS text/section/card structure. Product lists and the
+   homepage use separate layouts and are outside this scope.
+   ========================================= */
+
+html.rs-wood :where(body.is-ctl-navigation.is-act-index:is(.twt-is-cms-page, .twt-is-cms-landingpage)) .cms-page {
+  --rs-page-ink: #3c2b1c;
+  --rs-page-muted: #695542;
+  --rs-page-paper: #fffdf9;
+  --rs-page-soft: #f6ebdc;
+  --rs-page-line: #e5d2bb;
+  --rs-page-link: #855329;
+}
+
+html.rs-wood :where(body.is-ctl-navigation.is-act-index:is(.twt-is-cms-page, .twt-is-cms-landingpage)) .cms-page > .cms-sections > .cms-section:not(:has(.cms-block)) {
+  display: none !important;
+}
+
+html.rs-wood :where(body.is-ctl-navigation.is-act-index:is(.twt-is-cms-page, .twt-is-cms-landingpage)) .cms-section:has(.cms-element-text, .cms-element-form) {
+  background: transparent !important;
+  padding-block: clamp(16px, 2.5vw, 32px) !important;
+}
+
+html.rs-wood :where(body.is-ctl-navigation.is-act-index:is(.twt-is-cms-page, .twt-is-cms-landingpage)) .cms-element-text {
+  width: min(100%, 1100px);
+  color: var(--rs-page-ink) !important;
+  font-family: var(--rs-font-body);
+  overflow-wrap: break-word;
+}
+
+/* Plain text pages and future CMS content without a custom section wrapper. */
+html.rs-wood :where(body.is-ctl-navigation.is-act-index:is(.twt-is-cms-page, .twt-is-cms-landingpage)) .cms-element-text:not(:has(> section)) {
+  max-width: 1040px;
+  margin: 20px auto 48px;
+  padding: clamp(24px, 4vw, 48px);
+  border: 1px solid var(--rs-page-line);
+  border-radius: 22px;
+  background: linear-gradient(150deg, #fffdf9, #fbf3e7) !important;
+  box-shadow: 0 18px 50px rgba(86, 56, 30, 0.09);
+}
+
+/* Semantic surfaces and common card names used by embedded CMS designs. */
+html.rs-wood :where(body.is-ctl-navigation.is-act-index:is(.twt-is-cms-page, .twt-is-cms-landingpage)) .cms-element-text :is(section, article, header, aside, [class$="__card"], [class$="-card"], [class$="__panel"], [class$="-panel"]) {
+  border-color: var(--rs-page-line) !important;
+  background-color: var(--rs-page-paper) !important;
+  background-image: none !important;
+  color: var(--rs-page-ink) !important;
+  box-shadow: 0 12px 32px rgba(86, 56, 30, 0.07) !important;
+}
+
+html.rs-wood :where(body.is-ctl-navigation.is-act-index:is(.twt-is-cms-page, .twt-is-cms-landingpage)) .cms-element-text :is(h1, h2, h3, h4, h5, h6) {
+  color: var(--rs-page-ink) !important;
+  background: none !important;
+  -webkit-text-fill-color: currentColor !important;
+  font-family: var(--rs-font-serif) !important;
+  font-weight: 600 !important;
+  line-height: 1.25;
+  text-transform: none !important;
+  text-shadow: none !important;
+}
+
+html.rs-wood :where(body.is-ctl-navigation.is-act-index:is(.twt-is-cms-page, .twt-is-cms-landingpage)) .cms-element-text :is(p, li, blockquote, dt, dd, label, small) {
+  color: var(--rs-page-muted) !important;
+  line-height: 1.7;
+  text-shadow: none !important;
+}
+
+html.rs-wood :where(body.is-ctl-navigation.is-act-index:is(.twt-is-cms-page, .twt-is-cms-landingpage)) .cms-element-text :is(strong, b, em, h1 span, h2 span, h3 span) {
+  color: var(--rs-page-ink) !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+html.rs-wood :where(body.is-ctl-navigation.is-act-index:is(.twt-is-cms-page, .twt-is-cms-landingpage)) .cms-element-text a {
+  color: var(--rs-page-link) !important;
+  text-decoration-color: #b88a5e;
+}
+
+html.rs-wood :where(body.is-ctl-navigation.is-act-index:is(.twt-is-cms-page, .twt-is-cms-landingpage)) .cms-element-text :is(a[class*="btn"], button) {
+  border-color: #c9a77e !important;
+  background: linear-gradient(180deg, #fffdf9, #edd9bd) !important;
+  color: #583a21 !important;
+  box-shadow: 0 7px 18px rgba(86, 56, 30, 0.11);
+}
+
+/* Native Shopware CMS forms use a separate element from CMS text. */
+html.rs-wood :where(body.is-ctl-navigation.is-act-index:is(.twt-is-cms-page, .twt-is-cms-landingpage)) .cms-element-form {
+  box-sizing: border-box;
+  width: min(100%, 1040px);
+  margin: 20px auto 48px;
+  padding: clamp(20px, 3vw, 38px);
+  border: 1px solid var(--rs-page-line);
+  border-radius: 22px;
+  background: linear-gradient(150deg, #fffdf9, #fbf3e7) !important;
+  box-shadow: 0 18px 50px rgba(86, 56, 30, 0.09);
+  color: var(--rs-page-ink);
+}
+
+html.rs-wood :where(body.is-ctl-navigation.is-act-index:is(.twt-is-cms-page, .twt-is-cms-landingpage)) .cms-element-form .card {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html.rs-wood :where(body.is-ctl-navigation.is-act-index:is(.twt-is-cms-page, .twt-is-cms-landingpage)) .cms-element-form .card-title {
+  margin-bottom: 22px !important;
+  color: var(--rs-page-ink) !important;
+  font-family: var(--rs-font-serif);
+  font-size: clamp(1.6rem, 2.5vw, 2rem);
+  font-weight: 600;
+}
+
+html.rs-wood :where(body.is-ctl-navigation.is-act-index:is(.twt-is-cms-page, .twt-is-cms-landingpage)) .cms-element-form .form-label {
+  color: var(--rs-page-ink) !important;
+  font-weight: 600;
+}
+
+html.rs-wood :where(body.is-ctl-navigation.is-act-index:is(.twt-is-cms-page, .twt-is-cms-landingpage)) .cms-element-form :is(.form-control, .form-select) {
+  min-height: 44px;
+  border: 1px solid #d6bea0 !important;
+  border-radius: 10px !important;
+  background: #fffdf9 !important;
+  color: var(--rs-page-ink) !important;
+  box-shadow: none !important;
+}
+
+html.rs-wood :where(body.is-ctl-navigation.is-act-index:is(.twt-is-cms-page, .twt-is-cms-landingpage)) .cms-element-form :is(.form-control, .form-select):focus {
+  border-color: #a36a3a !important;
+  box-shadow: 0 0 0 3px rgba(163, 106, 58, 0.14) !important;
+}
+
+html.rs-wood :where(body.is-ctl-navigation.is-act-index:is(.twt-is-cms-page, .twt-is-cms-landingpage)) .cms-element-form :is(.form-text, .form-check-label, .form-required-label) {
+  color: var(--rs-page-muted) !important;
+}
+
+html.rs-wood :where(body.is-ctl-navigation.is-act-index:is(.twt-is-cms-page, .twt-is-cms-landingpage)) .cms-element-form .form-check-input {
+  accent-color: #996132;
+}
+
+html.rs-wood :where(body.is-ctl-navigation.is-act-index:is(.twt-is-cms-page, .twt-is-cms-landingpage)) .cms-element-form .btn-primary {
+  margin-top: 16px;
+  border-color: #80502a !important;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #a66c3b, #80502a) !important;
+  color: #fffaf3 !important;
+}
+
+/* BLF uses an ID-scoped dark palette in its shared content. Keep the brand
+   logo, imagery, layout and links while mapping that palette to wood tones. */
+html.rs-wood body.is-ctl-navigation #blf-support.blf-support {
+  --blf-bg: #fbf3e7 !important;
+  --blf-bg-alt: #fffdf9 !important;
+  --blf-surface: #f7ecdd !important;
+  --blf-surface-soft: #fffaf3 !important;
+  --blf-border: #e5d2bb !important;
+  --blf-text: #3c2b1c !important;
+  --blf-text-muted: #695542 !important;
+  --blf-accent: #996132 !important;
+  --blf-accent-soft: rgba(153, 97, 50, 0.14) !important;
+  --blf-shadow-soft: 0 18px 50px rgba(86, 56, 30, 0.1) !important;
+  padding: clamp(20px, 3vw, 42px) !important;
+}
+
+html.rs-wood body.is-ctl-navigation #blf-support .blf-hero {
+  border: 1px solid #e5d2bb !important;
+  background: linear-gradient(150deg, #fffdf9, #f5e8d5) !important;
+}
+
+html.rs-wood body.is-ctl-navigation #blf-support .blf-hero__logo {
+  width: fit-content;
+  margin: 0 auto 1.3rem;
+  padding: 14px;
+  border-radius: 15px;
+  background: #292825 !important;
+}
+
+html.rs-wood body.is-ctl-navigation #blf-support .blf-hero::before,
+html.rs-wood body.is-ctl-navigation #blf-support .blf-card::before {
+  display: none !important;
+}
+
+html.rs-wood body.is-ctl-navigation #blf-support :is(.blf-hero__eyebrow, .blf-easter__badge) {
+  border-color: #dbc2a1 !important;
+  background: #f2e4d0 !important;
+  color: #76502f !important;
+}
+
+html.rs-wood body.is-ctl-navigation #blf-support .blf-hero__title strong,
+html.rs-wood body.is-ctl-navigation #blf-support .blf-section__title span,
+html.rs-wood body.is-ctl-navigation #blf-support .blf-card__title span,
+html.rs-wood body.is-ctl-navigation #blf-support .blf-hero__subtitle span {
+  color: #8d592c !important;
+}
+
+html.rs-wood body.is-ctl-navigation #blf-support .blf-btn--primary {
+  border-color: #80502a !important;
+  background: linear-gradient(135deg, #a66c3b, #80502a) !important;
+  color: #fffaf3 !important;
+}
+
+html.rs-wood body.is-ctl-navigation #blf-support .blf-btn--outline {
+  border-color: #c9a77e !important;
+  background: #fffaf3 !important;
+  color: #684322 !important;
+}
+
+@media (max-width: 700px) {
+  html.rs-wood :where(body.is-ctl-navigation.is-act-index:is(.twt-is-cms-page, .twt-is-cms-landingpage)) .cms-section-default.boxed:has(.cms-element-text, .cms-element-form),
+  html.rs-wood :where(body.is-ctl-navigation.is-act-index:is(.twt-is-cms-page, .twt-is-cms-landingpage)) .cms-block:has(.cms-element-text, .cms-element-form),
+  html.rs-wood :where(body.is-ctl-navigation.is-act-index:is(.twt-is-cms-page, .twt-is-cms-landingpage)) .cms-block-container:has(.cms-element-text, .cms-element-form),
+  html.rs-wood :where(body.is-ctl-navigation.is-act-index:is(.twt-is-cms-page, .twt-is-cms-landingpage)) .cms-block-container-row:has(.cms-element-text, .cms-element-form),
+  html.rs-wood :where(body.is-ctl-navigation.is-act-index:is(.twt-is-cms-page, .twt-is-cms-landingpage)) .col-12:has(.cms-element-text, .cms-element-form) {
+    padding-inline: 0 !important;
+  }
+
+  html.rs-wood :where(body.is-ctl-navigation.is-act-index:is(.twt-is-cms-page, .twt-is-cms-landingpage)) .cms-block-container-row:has(.cms-element-text, .cms-element-form) {
+    margin-inline: 0 !important;
+  }
+
+  html.rs-wood :where(body.is-ctl-navigation.is-act-index:is(.twt-is-cms-page, .twt-is-cms-landingpage)) .cms-element-text:not(:has(> section)) {
+    box-sizing: border-box;
+    width: calc(100% - 16px);
+    margin: 12px 8px 42px;
+    padding: 22px 18px;
+    border-radius: 18px;
+  }
+
+  html.rs-wood :where(body.is-ctl-navigation.is-act-index:is(.twt-is-cms-page, .twt-is-cms-landingpage)) .cms-element-form {
+    width: calc(100% - 16px);
+    margin: 12px 8px 42px;
+    padding: 20px 16px;
+    border-radius: 18px;
+  }
+
+  html.rs-wood body.is-ctl-navigation #blf-support.blf-support {
+    padding: 12px 8px 42px !important;
+  }
+}
+
+/* =========================================
+   15) SHARED SHOP SERVICE PAGES
    These CMS blocks are shared with other shops and bring their own dark styles.
    Scope the visual override to Rohrstoecke; leave the legal text and forms intact.
    ========================================= */
