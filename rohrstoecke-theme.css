@@ -1793,6 +1793,152 @@ html.is-ctl-product .product-detail-tabs .tab-content,
   border: 1px solid rgba(80,60,40,0.12) !important;
 }
 
+/* ---- 7.7a) RICH PRODUCT DESCRIPTIONS ----
+   Product copy is shared with other storefronts and includes a dark palette
+   in inline styles. Keep its content and layout, but render this template in
+   Rohrstoecke's light wood palette. The selector is confined to the dark
+   description template, so ordinary Shopware descriptions are unaffected. */
+
+html.rs-wood body.is-ctl-product .product-detail-description-text > div[style*="background:#171412"] {
+  box-sizing: border-box;
+  max-width: 100%;
+  padding: clamp(20px, 3.5vw, 38px) !important;
+  border: 1px solid #e6d4bd !important;
+  border-radius: 18px;
+  background: linear-gradient(150deg, #fffdf9, #f8eee0) !important;
+  color: #4e3d2d !important;
+  font-family: var(--rs-font-body) !important;
+  line-height: 1.7 !important;
+  box-shadow: 0 14px 36px rgba(80, 52, 30, 0.09);
+}
+
+html.rs-wood body.is-ctl-product .product-detail-description-text > div[style*="background:#171412"] > div:first-child {
+  color: #92613b !important;
+  font-size: 0.76rem !important;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+html.rs-wood body.is-ctl-product .product-detail-description-text > div[style*="background:#171412"] :is(h2, h3) {
+  color: #3c2b1c !important;
+  font-family: var(--rs-font-serif) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.01em;
+}
+
+html.rs-wood body.is-ctl-product .product-detail-description-text > div[style*="background:#171412"] > h2 {
+  font-size: clamp(1.6rem, 2.6vw, 2rem) !important;
+  line-height: 1.25 !important;
+}
+
+html.rs-wood body.is-ctl-product .product-detail-description-text > div[style*="background:#171412"] > h3 {
+  font-size: clamp(1.25rem, 2vw, 1.5rem) !important;
+}
+
+html.rs-wood body.is-ctl-product .product-detail-description-text > div[style*="background:#171412"] p {
+  color: #4e3d2d !important;
+  line-height: 1.75 !important;
+}
+
+html.rs-wood body.is-ctl-product .product-detail-description-text > div[style*="background:#171412"] > p:first-of-type {
+  color: #604a36 !important;
+  font-size: 1.05rem !important;
+}
+
+html.rs-wood body.is-ctl-product .product-detail-description-text > div[style*="background:#171412"] > p:last-child {
+  color: #7a6a5b !important;
+}
+
+html.rs-wood body.is-ctl-product .product-detail-description-text > div[style*="background:#171412"] > div[style*="display:flex"] {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px !important;
+}
+
+html.rs-wood body.is-ctl-product .product-detail-description-text > div[style*="background:#171412"] > div[style*="display:flex"] > div {
+  min-width: 0;
+  max-width: none !important;
+  border: 1px solid #e5d3bd !important;
+  border-radius: 12px !important;
+  background: #fffaf3 !important;
+  color: #4e3d2d !important;
+  box-shadow: 0 5px 16px rgba(80, 52, 30, 0.05);
+}
+
+html.rs-wood body.is-ctl-product .product-detail-description-text > div[style*="background:#171412"] :is(strong, th) {
+  color: #80502a !important;
+}
+
+html.rs-wood body.is-ctl-product .product-detail-description-text > div[style*="background:#171412"] table {
+  max-width: 100%;
+  color: #4e3d2d !important;
+}
+
+html.rs-wood body.is-ctl-product .product-detail-description-text > div[style*="background:#171412"] tr {
+  background: #fffdf9 !important;
+}
+
+html.rs-wood body.is-ctl-product .product-detail-description-text > div[style*="background:#171412"] tr:nth-child(odd) {
+  background: #f4e8d7 !important;
+}
+
+html.rs-wood body.is-ctl-product .product-detail-description-text > div[style*="background:#171412"] :is(th, td) {
+  border-color: #dfccb3 !important;
+  color: #4e3d2d !important;
+  overflow-wrap: anywhere;
+}
+
+html.rs-wood body.is-ctl-product .product-detail-description-text > div[style*="background:#171412"] th {
+  color: #754b29 !important;
+  font-weight: 700;
+}
+
+html.rs-wood body.is-ctl-product .product-detail-description-text > div[style*="background:#171412"] > p[style*="border-left"] {
+  border-left-color: #a66c3b !important;
+  border-radius: 0 10px 10px 0;
+  background: #f2e4d0 !important;
+  color: #4e3d2d !important;
+}
+
+@media (max-width: 600px) {
+  html.rs-wood body.is-ctl-product .product-detail-description-text > div[style*="background:#171412"] > div[style*="display:flex"] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  html.rs-wood body.is-ctl-product .product-detail-description-text > div[style*="background:#171412"] table {
+    display: block;
+  }
+
+  html.rs-wood body.is-ctl-product .product-detail-description-text > div[style*="background:#171412"] tbody {
+    display: grid;
+    gap: 10px;
+  }
+
+  html.rs-wood body.is-ctl-product .product-detail-description-text > div[style*="background:#171412"] tr {
+    display: block;
+    overflow: hidden;
+    border: 1px solid #dfccb3;
+    border-radius: 10px;
+  }
+
+  html.rs-wood body.is-ctl-product .product-detail-description-text > div[style*="background:#171412"] :is(th, td) {
+    display: block;
+    width: 100% !important;
+    padding: 8px 12px !important;
+    border: 0 !important;
+    overflow-wrap: normal;
+  }
+
+  html.rs-wood body.is-ctl-product .product-detail-description-text > div[style*="background:#171412"] th {
+    background: #f1e1cd;
+    font-size: 0.86rem;
+  }
+
+  html.rs-wood body.is-ctl-product .product-detail-description-text > div[style*="background:#171412"] td {
+    background: #fffdf9;
+  }
+}
+
 /* ---- 7.8) РЕСПОНСИВ (product detail) ---- */
 
 @media (max-width: 1024px) {
