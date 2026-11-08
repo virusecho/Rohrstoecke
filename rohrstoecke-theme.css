@@ -3898,3 +3898,185 @@ html.rs-wood body.is-ctl-navigation .ph-widerruf .info-footer .expandable-conten
     justify-content: flex-start;
   }
 }
+
+/* =========================================
+   16) "MEIN KONTO" (dropdown + offcanvas) + PAYPAL-КНОПКА
+   Акаунт-меню тема ThemeWare малює червоним (#d23737, спільний стиль з
+   іншим магазином), а "Anmelden" ставав чорним через глобальний .btn-primary
+   (секція 5). Тут — wood-стиль: кремова панель, дерев'яна кнопка-пігулка.
+   Той самий вміст на телефоні Shopware переносить у .account-menu-offcanvas,
+   тому вміст стилізуємо для обох контейнерів.
+   ========================================= */
+
+/* --- панель-дропдаун (десктоп) --- */
+html.rs-wood header .account-menu .dropdown-menu.account-menu-dropdown {
+  --bs-dropdown-bg: #fffaf3;
+  --bs-dropdown-color: var(--rs-text-main);
+  --bs-dropdown-border-color: rgba(120, 90, 60, 0.18);
+  min-width: 260px;
+  padding: 1.1rem 1.25rem 0.9rem;
+  border: 1px solid rgba(120, 90, 60, 0.18);
+  border-radius: 18px;
+  background: linear-gradient(160deg, #fffaf3, #f3e3c9);
+  box-shadow: 0 24px 54px rgba(80, 52, 30, 0.22);
+  color: var(--rs-text-main);
+}
+
+/* стрілочка-"хвостик" над панеллю — у колір панелі */
+html.rs-wood header .account-menu .dropdown-menu.account-menu-dropdown::before {
+  background: #fffaf3;
+  border-color: rgba(120, 90, 60, 0.18);
+}
+
+/* --- панель на телефоні (offcanvas) --- */
+html.rs-wood .offcanvas.account-menu-offcanvas {
+  --bs-offcanvas-bg: #fffaf3;
+  background: linear-gradient(170deg, #fffaf3, #f3e3c9) !important;
+  color: var(--rs-text-main);
+  box-shadow: 0 0 60px rgba(80, 52, 30, 0.25);
+}
+
+html.rs-wood .account-menu-offcanvas .offcanvas-header {
+  background: transparent !important;
+  border-bottom: 1px solid rgba(120, 90, 60, 0.16);
+}
+
+html.rs-wood .account-menu-offcanvas .offcanvas-close {
+  --bs-btn-color: var(--rs-text-main);
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: transparent;
+  --bs-btn-hover-color: var(--rs-accent);
+  --bs-btn-hover-bg: rgba(183, 119, 61, 0.08);
+  --bs-btn-hover-border-color: transparent;
+  --bs-btn-active-color: var(--rs-accent);
+  --bs-btn-active-bg: rgba(183, 119, 61, 0.12);
+  --bs-btn-active-border-color: transparent;
+  font-family: var(--rs-font-serif);
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+}
+
+/* --- вміст (спільний для дропдауна й offcanvas) --- */
+html.rs-wood :is(.account-menu-dropdown, .account-menu-offcanvas) .account-menu-header {
+  padding: 0 0 0.65rem !important;
+  border-bottom: 1px solid rgba(120, 90, 60, 0.2) !important;
+  color: #2c1f15 !important;
+  font-family: var(--rs-font-serif);
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: normal;
+}
+
+html.rs-wood :is(.account-menu-dropdown, .account-menu-offcanvas) .account-menu-login {
+  padding: 1rem 0 0.9rem !important;
+  border-bottom: 1px solid rgba(120, 90, 60, 0.2) !important;
+}
+
+/* "Anmelden" — та сама дерев'яна пігулка, що й "In den Warenkorb" */
+html.rs-wood :is(.account-menu-dropdown, .account-menu-offcanvas) .account-menu-login-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin: 0 0 0.65rem !important;
+  padding: 0.75rem 1.2rem !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: linear-gradient(135deg, #b7773d, #9c5f2e) !important;
+  box-shadow: 0 12px 26px rgba(120, 70, 30, 0.28);
+  color: #fff !important;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+html.rs-wood :is(.account-menu-dropdown, .account-menu-offcanvas) .account-menu-login-button:hover,
+html.rs-wood :is(.account-menu-dropdown, .account-menu-offcanvas) .account-menu-login-button:focus-visible {
+  transform: translateY(-1px);
+  filter: brightness(1.06);
+  box-shadow: 0 16px 32px rgba(120, 70, 30, 0.34);
+  color: #fff !important;
+  text-shadow: none;
+}
+
+html.rs-wood :is(.account-menu-dropdown, .account-menu-offcanvas) .account-menu-register {
+  color: var(--rs-text-muted);
+  font-size: 0.88rem;
+}
+
+html.rs-wood :is(.account-menu-dropdown, .account-menu-offcanvas) .account-menu-register a {
+  color: var(--rs-accent) !important;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: rgba(183, 119, 61, 0.4);
+  text-underline-offset: 2px;
+}
+
+/* пункти меню: Übersicht / Profil / Adressen / Bestellungen */
+html.rs-wood :is(.account-menu-dropdown, .account-menu-offcanvas) .account-aside-list-group {
+  padding: 0.55rem 0 !important;
+}
+
+html.rs-wood :is(.account-menu-dropdown, .account-menu-offcanvas) .account-aside-item {
+  margin: 1px -0.65rem;
+  padding: 0.5rem 0.65rem !important;
+  border: 0 !important;
+  border-radius: 10px;
+  background: transparent !important;
+  color: var(--rs-text-main) !important;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+html.rs-wood :is(.account-menu-dropdown, .account-menu-offcanvas) .account-aside-item:hover,
+html.rs-wood :is(.account-menu-dropdown, .account-menu-offcanvas) .account-aside-item:focus-visible {
+  background: rgba(183, 119, 61, 0.12) !important;
+  color: #2c1f15 !important;
+  text-shadow: none;
+}
+
+html.rs-wood :is(.account-menu-dropdown, .account-menu-offcanvas) .account-aside-item.is-active {
+  color: var(--rs-accent) !important;
+  font-weight: 700;
+}
+
+/* для залогінених: "Abmelden" */
+html.rs-wood :is(.account-menu-dropdown, .account-menu-offcanvas) .account-aside-footer {
+  padding: 0.6rem 0 0 !important;
+  border-top: 1px solid rgba(120, 90, 60, 0.2) !important;
+}
+
+html.rs-wood :is(.account-menu-dropdown, .account-menu-offcanvas) .account-aside-btn {
+  padding: 0.35rem 0;
+  color: var(--rs-text-muted) !important;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+html.rs-wood :is(.account-menu-dropdown, .account-menu-offcanvas) .account-aside-btn:hover {
+  color: var(--rs-accent) !important;
+  text-shadow: none;
+}
+
+/* --- PayPal Express (Shopware Payments <paypal-button>) ---
+   Колір кнопки — фірмовий PayPal (правила бренду), але форма — пігулка,
+   як у всіх наших кнопок. Компонент сам читає --paypal-button-border-radius. */
+html.rs-wood .shopware-payments-button {
+  --paypal-button-border-radius: 999px;
+  border-radius: 999px;
+}
+
+/* на сторінці товару: висота й тінь як у "In den Warenkorb" */
+html.rs-wood body.is-ctl-product .product-detail-buy .shopware-payments-product-detail-row {
+  margin-top: 0.75rem !important;
+}
+
+html.rs-wood body.is-ctl-product .product-detail-buy .shopware-payments-button {
+  height: 52px;
+  box-shadow: 0 10px 24px rgba(120, 70, 30, 0.16);
+}
