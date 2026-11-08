@@ -11,23 +11,31 @@
      3)  SEARCH COLLAPSE (завжди відкритий)
      4)  CMS / THEMEWARE CLEANUP
      5)  Інші оверрайди (типографіка, zoom, packstation, shipping)
-     6)  ACRIS SEARCH SUGGEST – глобальний фікс + tablet/mobile
-     7)  PRODUCT DETAIL v5 (коридор, layout, buybox, конфігуратор, таби)
-     8)  PRODUCT GALLERY (3 послідовні блоки — див. [TODO-CLEANUP #1])
+     6)  ACRIS SEARCH SUGGEST
+     7)  PRODUCT DETAIL v5 (класичний шаблон: layout, buybox, кількість, опис)
+     8)  PRODUCT DETAIL — база галереї + КОРИДОР сторінки товару (єдине місце)
+     9)  Картки крос-селінгу / "Ähnliche Artikel" + картка опису
+     10) Кнопка "Warenkorb" у картках завжди видима
+     11) PRODUCT DETAIL v6 "Atelier" (CMS-розкладка ThemeWare — актуальний дизайн)
+     12) Каталог: hover-popover опису не перекриває ціну/кнопку
+     13) Результати пошуку
+     14) Інформаційні CMS-сторінки
+     15) Спільні сервісні сторінки (AGB, Datenschutz, Widerruf)
 
-   ПОЗНАЧКИ НА МАЙБУТНЄ (нічого ще не видалено!):
-     [TODO-CLEANUP #1] Галерея товару: 3 конфліктні блоки (.product-detail-media).
-                       Зараз виграє останній (contain/no-crop). Уточнити бажаний вигляд,
-                       тоді лишити один блок.
-     [TODO-CLEANUP #2] "Коридор 1100px" сторінки товару дублюється кілька разів
-                       наприкінці файлу — можна звести до одного блоку.
-     [TODO-CLEANUP #3] JS створює .rs-variant-pill / .rs-variant-pill-row /
-                       .rs-variant-hidden, але стилів для них тут НЕМАЄ.
-                       Потрібно додати (інакше select варіантів просто ховається).
-     [TODO-CLEANUP #4] Логотип у JS захардкоджено на чужий домен (fetisch-hof.de).
-     [TODO-CLEANUP #5] Глобальні селектори без неймспейсу (.btn-primary, .cms-section,
-                       .page-wrapper{background:#fff!important} тощо) можуть зачіпати
-                       checkout / інші сторінки — перевірити.
+   ОПТИМІЗАЦІЯ (без зміни вигляду, перевірено порівнянням обчислених стилів):
+     - прибрано оголошення, які завжди перекривались пізнішими/сильнішими
+       правилами (старі версії галереї, коридору, buybox, табів тощо);
+     - прибрано селектори html.is-ctl-product …: клас is-ctl-product стоїть
+       на <body>, тож вони ніколи не спрацьовували;
+     - коридор сторінки товару зведено в одне місце (секція 8c);
+     - однакові блоки пошуку для планшета і телефона злиті в один (секція 2);
+     - прибрано стилі pill-варіантів (.rs-variant-pill…): JS їх більше не створює.
+
+   ПОЗНАЧКИ НА МАЙБУТНЄ:
+     [TODO #4] Логотип у JS захардкоджено на чужий домен (fetisch-hof.de).
+     [TODO #5] Глобальні селектори без неймспейсу (.btn-primary, .cms-section,
+               .page-wrapper{background:#fff!important} тощо) у секціях 4–5
+               можуть зачіпати checkout / інші сторінки — перевірити.
    ========================================================= */
 
 /* =========================================
@@ -509,7 +517,6 @@ html.rs-wood.rs-header-built .rs-wood .nav-main {
     margin: 0 auto;
     padding: 10px 240px 12px 24px; /* праворуч запас під іконки */
     column-gap: 0.5rem;
-    box-sizing: border-box;
   }
 
   .rs-wood .rs-header-nav__brand-block {
@@ -544,10 +551,8 @@ html.rs-wood.rs-header-built .rs-wood .nav-main {
     right: 24px;
     transform: none;
     display: flex;
-    flex-direction: column;
     align-items: flex-end;
     gap: 4px;
-    white-space: nowrap;
   }
 
   .rs-wood .rs-header-nav__actions-bottom {
@@ -648,18 +653,23 @@ html.rs-wood.rs-header-built .rs-wood .nav-main {
     font-size: 0.8rem;
   }
 
-  /* 2 рядок: пошук – базово */
+  /* 2 рядок: пошук по центру, не ширше 480px */
   .rs-wood .rs-header-nav__search-row {
     grid-area: search;
     width: 100%;
     position: relative; /* для Vorschau */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: visible;
+    margin-top: 4px;
   }
 
   .rs-wood .rs-header-nav__search {
     width: 100%;
-    flex: 1 1 auto;
-    max-width: 100%;
-    margin: 0;
+    flex: 0 1 auto;
+    max-width: 480px;
+    margin: 0 auto;
   }
 
   .rs-wood .rs-header-nav__search .input-group {
@@ -708,7 +718,6 @@ html.rs-wood.rs-header-built .rs-wood .nav-main {
     font-size: 0.85rem;
     padding: 4px 8px;
     flex-shrink: 0;
-    white-space: nowrap;
   }
 
   .rs-wood .rs-header-nav__list > li + li::before {
@@ -847,9 +856,7 @@ html.rs-wood .is-sticky + .content-main {
 }
 
 /* Sticky-Header-Abstand eliminieren */
-.tw-header-spacer,
 .tw-sticky-spacer,
-.header-spacer,
 .is-sticky + .content-main,
 .is-sticky ~ .content-main {
   height: 0 !important;
@@ -893,8 +900,6 @@ html.rs-wood .is-sticky + .content-main {
 
 .cms-element-text h1 {
   margin-bottom: 1.8rem;
-  letter-spacing: 0.02em;
-  line-height: 1.15;
   max-width: 900px;
   margin-left: auto;
   margin-right: auto;
@@ -1320,100 +1325,24 @@ html.rs-wood .is-sticky + .content-main {
   width: 100% !important;
 }
 
-/* === Tablet-Fix für die Suche Rohrstoecke.de (768–1024px) === */
-@media (min-width: 768px) and (max-width: 1024px) {
-  .rs-wood .rs-header-nav__search-row {
-    grid-area: search;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    overflow: visible;
-    margin-top: 4px;
-  }
-
-  .rs-wood .rs-header-nav__search {
-    flex: 0 1 auto;
-    max-width: 480px;
-    width: 100%;
-    margin: 0 auto;
-  }
-
-  .rs-wood .rs-header-nav__search .input-group {
-    width: 100%;
-  }
-}
-
-/* === Mobile-Fix für die Suche Rohrstoecke.de (<=768px) === */
-@media (max-width: 768px) {
-  .rs-wood .rs-header-nav__search-row {
-    grid-area: search;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    overflow: visible;
-    margin-top: 4px;
-  }
-
-  .rs-wood .rs-header-nav__search {
-    flex: 0 1 auto;
-    max-width: 480px;
-    width: 100%;
-    margin: 0 auto;
-  }
-
-  .rs-wood .rs-header-nav__search .input-group {
-    width: 100%;
-  }
-}
-
 /* =========================================================
-   7) ROHRSTOECKE – PRODUCT DETAIL v5 (clean) — FINAL (safe)
-   - коридор 1100px (включно з outer containers)
+   7) ROHRSTOECKE – PRODUCT DETAIL v5 (класичний шаблон Shopware)
    - НЕ ламає bootstrap gutters
    - НЕ лізе в механіку Shopware gallery ratio-box
-   - залишає premium-картки для media + buybox + tabs
+   - коридор 1100px — див. секцію 8c
+   Більшість вигляду сторінки товару тепер задає секція 11; тут лишилось
+   лише те, що секція 11 не перекриває.
    ========================================================= */
-
-/* ---- 7.0) SAFE CORRIDOR (outer containers + product blocks) ---- */
-/* [TODO-CLEANUP #2] цей "коридор 1100px" нижче дублюється ще кілька разів. */
-
-body.is-ctl-product .content-main > .container,
-body.is-ctl-product .content-main .container,
-body.is-ctl-product .cms-page,
-body.is-ctl-product .cms-section .boxed,
-body.is-ctl-product .product-detail,
-body.is-ctl-product .product-detail-main,
-body.is-ctl-product .product-detail-tabs,
-body.is-ctl-product .product-detail-headline,
-body.is-ctl-product .breadcrumb {
-  width: 100% !important;
-  max-width: 1100px !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-  padding-left: 18px !important;
-  padding-right: 18px !important;
-}
-
-/* ВАЖЛИВО: не прибиваємо .row / col-* gutters! */
-
 
 /* ---- 7.1) Головний контейнер продукту – центральний коридор ---- */
 
-html.is-ctl-product .product-detail,
 .is-ctl-product .product-detail {
-  max-width: 1100px !important;
   margin: 2.4rem auto 3.4rem !important;
   padding: 0 18px !important;
   background: transparent !important;
 }
 
 /* Прибираємо старі карточки/рамки */
-html.is-ctl-product .product-detail .card,
-html.is-ctl-product .product-detail .card-body,
 .is-ctl-product .product-detail .card,
 .is-ctl-product .product-detail .card-body {
   background: transparent !important;
@@ -1424,30 +1353,15 @@ html.is-ctl-product .product-detail .card-body,
 
 /* ---- 7.2) Двоколонковий layout (галерея + buybox) ---- */
 
-html.is-ctl-product .product-detail-main,
 .is-ctl-product .product-detail-main {
   display: grid !important;
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.15fr) !important;
   gap: 2.2rem !important;
   align-items: flex-start !important;
-  max-width: 1100px !important;
   margin: 0 auto !important;
 }
 
-/* Заголовок продукту */
-html.is-ctl-product .product-detail-name,
-.is-ctl-product .product-detail-name {
-  font-family: var(--rs-font-serif) !important;
-  font-size: clamp(1.9rem, 2.4vw, 2.3rem) !important;
-  letter-spacing: 0.045em !important;
-  text-transform: uppercase !important;
-  line-height: 1.15 !important;
-  color: #2c1f15 !important;
-  margin: 0 0 1.2rem !important;
-}
-
 /* Невеликий надзаголовок (виробник/категорія) */
-html.is-ctl-product .product-detail-manufacturer,
 .is-ctl-product .product-detail-manufacturer {
   font-family: var(--rs-font-hand) !important;
   font-size: 0.95rem !important;
@@ -1458,32 +1372,18 @@ html.is-ctl-product .product-detail-manufacturer,
 /* ---- 7.3) ЛІВА КОЛОНКА – ГАЛЕРЕЯ (SAFE) ----
    ТІЛЬКИ оболонка/картка. НЕ змінюємо .gallery-slider/.item/img (Shopware ratio-box). */
 
-html.is-ctl-product .product-detail-media,
 .is-ctl-product .product-detail-media {
-  background:
-    radial-gradient(circle at 0 0, rgba(255,255,255,0.85), transparent 55%),
-    radial-gradient(circle at 100% 100%, rgba(255,255,255,0.9), transparent 55%),
-    rgba(255,255,255,0.94) !important;
-  border-radius: 22px !important;
-  padding: 1.1rem 1.2rem 1.15rem !important;
-  box-shadow: 0 20px 52px rgba(80, 52, 30, 0.26) !important;
-  border: 1px solid rgba(80, 60, 40, 0.16) !important;
-
   max-width: 520px !important;
   width: 100% !important;
   justify-self: center !important;
-
-  overflow: hidden !important; /* важливо для rounded */
 }
 
 /* thumbnails — можна, це не ламає ratio-box */
-html.is-ctl-product .gallery-slider-thumbnails,
 .is-ctl-product .gallery-slider-thumbnails {
   margin-top: 0.85rem !important;
   gap: 0.55rem !important;
 }
 
-html.is-ctl-product .gallery-slider-thumbnails-item,
 .is-ctl-product .gallery-slider-thumbnails-item {
   border-radius: 11px !important;
   overflow: hidden !important;
@@ -1492,41 +1392,19 @@ html.is-ctl-product .gallery-slider-thumbnails-item,
 
 /* ---- 7.4) ПРАВА КОЛОНКА – BUYBOX ---- */
 
-html.is-ctl-product .product-detail-buy,
 .is-ctl-product .product-detail-buy {
-  background:
-    radial-gradient(circle at 0 0, rgba(255,255,255,0.95), transparent 55%),
-    radial-gradient(circle at 100% 100%, rgba(255,255,255,0.98), transparent 55%),
-    linear-gradient(135deg, #fdf6ed, #f0dcc1) !important;
-  border-radius: var(--rs-radius-lg, 22px) !important;
-  box-shadow: var(--rs-shadow-soft, 0 18px 44px rgba(80,52,30,0.22)) !important;
-  padding: 1.65rem 1.8rem 1.9rem !important;
-  border: 1px solid rgba(80,52,30,0.18) !important;
   justify-self: center !important;
 }
 
-html.is-ctl-product .product-detail-buy > * + *,
 .is-ctl-product .product-detail-buy > * + * {
   margin-top: 0.9rem !important;
 }
 
-/* Ціна */
-html.is-ctl-product .product-detail-price,
-.is-ctl-product .product-detail-price {
-  font-family: var(--rs-font-serif) !important;
-  font-size: 1.7rem !important;
-  font-weight: 600 !important;
-  color: #2c1f15 !important;
-  margin-bottom: 0.25rem !important;
+/* MwSt., Versand, Artikelnummer, Lieferzeit */
+.is-ctl-product .product-detail-delivery-information {
+  color: var(--rs-text-muted) !important;
 }
 
-/* MwSt., Versand, Artikelnummer, Lieferzeit */
-html.is-ctl-product .product-detail-tax,
-html.is-ctl-product .product-detail-delivery-information,
-html.is-ctl-product .product-detail-ordernumber,
-html.is-ctl-product .product-detail-delivery,
-.is-ctl-product .product-detail-tax,
-.is-ctl-product .product-detail-delivery-information,
 .is-ctl-product .product-detail-ordernumber,
 .is-ctl-product .product-detail-delivery {
   font-size: 0.9rem !important;
@@ -1534,8 +1412,6 @@ html.is-ctl-product .product-detail-delivery,
 }
 
 /* Lieferzeit badge */
-html.is-ctl-product .product-detail-delivery .badge,
-html.is-ctl-product .product-detail-delivery span[class*="badge"],
 .is-ctl-product .product-detail-delivery .badge,
 .is-ctl-product .product-detail-delivery span[class*="badge"] {
   background: rgba(46,160,67,0.12) !important;
@@ -1547,23 +1423,10 @@ html.is-ctl-product .product-detail-delivery span[class*="badge"],
 
 /* ---- 7.5) КОНФІГУРАТОР ---- */
 
-html.is-ctl-product .product-detail-configurator,
 .is-ctl-product .product-detail-configurator {
-  margin-top: 1.1rem !important;
-  padding: 0.95rem 1.05rem 1.1rem !important;
   border-radius: 18px !important;
-  background: rgba(255,255,255,0.96) !important;
-  border: 1px solid var(--rs-border-subtle, rgba(80,60,40,0.18)) !important;
-  box-shadow: 0 12px 30px rgba(80,52,30,0.18) !important;
 }
 
-html.is-ctl-product .product-detail-configurator-group + .product-detail-configurator-group,
-.is-ctl-product .product-detail-configurator-group + .product-detail-configurator-group {
-  margin-top: 0.75rem !important;
-}
-
-html.is-ctl-product .product-detail-configurator .form-label,
-html.is-ctl-product .product-detail-configurator label,
 .is-ctl-product .product-detail-configurator .form-label,
 .is-ctl-product .product-detail-configurator label {
   display: block !important;
@@ -1574,46 +1437,25 @@ html.is-ctl-product .product-detail-configurator label,
   margin-bottom: 0.25rem !important;
 }
 
-html.is-ctl-product .product-detail-configurator select,
-.is-ctl-product .product-detail-configurator select {
-  width: 100% !important;
-  border-radius: 999px !important;
-  border: 1px solid rgba(80,60,40,0.32) !important;
-  background: linear-gradient(135deg,#fff9f2,#f4e0c7) !important;
-  box-shadow: 0 8px 22px rgba(80,52,30,0.22) !important;
-  padding: 0.52rem 2.4rem 0.52rem 1.05rem !important;
-  font-size: 0.93rem !important;
-  color: var(--rs-text-main, #2c1f15) !important;
-  appearance: none !important;
-  -webkit-appearance: none !important;
-}
-
-/* [TODO-CLEANUP #3] ВИРІШЕНО: стилі для .rs-variant-pill / -row / -hidden / свотчі
-   тепер у секції 9 (нижче). JS ховає select лише якщо pill-кнопки створились. */
-
 /* ---- 7.6) КІЛЬКІСТЬ + IN DEN WARENKORB + PAYPAL ---- */
 
 /* блок buy-widget всередині buybox */
-html.is-ctl-product .product-detail-buy .buy-widget-container,
 .is-ctl-product .product-detail-buy .buy-widget-container {
   max-width: 520px !important;
   margin: 1.1rem auto 0 !important;
 }
 
-html.is-ctl-product .product-detail-buy .buy-widget-container .row,
 .is-ctl-product .product-detail-buy .buy-widget-container .row {
   align-items: stretch !important;
   column-gap: 0.9rem !important;
 }
 
 /* fieldset з кількістю (col-4 d-flex justify-content-end) */
-html.is-ctl-product .product-detail-buy fieldset.col-4.d-flex.justify-content-end,
 .is-ctl-product .product-detail-buy fieldset.col-4.d-flex.justify-content-end {
   justify-content: flex-start !important;
 }
 
 /* капсула кількості */
-html.is-ctl-product .product-detail-buy .product-detail-quantity-group.quantity-selector-group,
 .is-ctl-product .product-detail-buy .product-detail-quantity-group.quantity-selector-group {
   display: flex !important;
   align-items: stretch !important;
@@ -1627,7 +1469,6 @@ html.is-ctl-product .product-detail-buy .product-detail-quantity-group.quantity-
 }
 
 /* кнопки +/- */
-html.is-ctl-product .product-detail-buy .product-detail-quantity-group .btn,
 .is-ctl-product .product-detail-buy .product-detail-quantity-group .btn {
   border: none !important;
   border-radius: 0 !important;
@@ -1642,7 +1483,6 @@ html.is-ctl-product .product-detail-buy .product-detail-quantity-group .btn,
 }
 
 /* контейнер іконки */
-html.is-ctl-product .product-detail-buy .product-detail-quantity-group .icon,
 .is-ctl-product .product-detail-buy .product-detail-quantity-group .icon {
   display: flex !important;
   align-items: center !important;
@@ -1650,7 +1490,6 @@ html.is-ctl-product .product-detail-buy .product-detail-quantity-group .icon,
 }
 
 /* svg – по центру */
-html.is-ctl-product .product-detail-buy .product-detail-quantity-group .icon svg,
 .is-ctl-product .product-detail-buy .product-detail-quantity-group .icon svg {
   display: block !important;
   vertical-align: middle !important;
@@ -1659,14 +1498,11 @@ html.is-ctl-product .product-detail-buy .product-detail-quantity-group .icon svg
 }
 
 /* колір іконок */
-html.is-ctl-product .product-detail-buy .product-detail-quantity-group .icon svg use,
 .is-ctl-product .product-detail-buy .product-detail-quantity-group .icon svg use {
   fill: #555555 !important;
 }
 
 /* input type="number" всередині капсули */
-html.is-ctl-product .product-detail-buy .product-detail-quantity-group-input,
-html.is-ctl-product .product-detail-buy .product-detail-quantity-group .quantity-selector-group-input,
 .is-ctl-product .product-detail-buy .product-detail-quantity-group-input,
 .is-ctl-product .product-detail-buy .product-detail-quantity-group .quantity-selector-group-input {
   border: none !important;
@@ -1680,21 +1516,16 @@ html.is-ctl-product .product-detail-buy .product-detail-quantity-group .quantity
   padding: 0 !important;
 }
 
-/* прибираємо спінери */
-html.is-ctl-product .product-detail-buy .product-detail-quantity-group-input::-webkit-outer-spin-button,
-html.is-ctl-product .product-detail-buy .product-detail-quantity-group-input::-webkit-inner-spin-button {
-  -webkit-appearance: none !important;
-  margin: 0 !important;
+/* кнопка In den Warenkorb – full-width всередині коридору
+   (.btn-buy: решту вигляду задає секція 11.4) */
+.is-ctl-product .product-detail-buy .btn-buy {
+  padding: 0.9rem 2rem !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  max-width: 520px !important;
+  margin: 0 auto !important;
 }
 
-html.is-ctl-product .product-detail-buy .product-detail-quantity-group-input[type="number"] {
-  -moz-appearance: textfield !important;
-}
-
-/* кнопка In den Warenkorb – full-width всередині коридору */
-html.is-ctl-product .product-detail-buy .btn-buy,
-html.is-ctl-product .product-detail-buy button.btn-primary,
-.is-ctl-product .product-detail-buy .btn-buy,
 .is-ctl-product .product-detail-buy button.btn-primary {
   display: inline-flex !important;
   align-items: center !important;
@@ -1719,9 +1550,10 @@ html.is-ctl-product .product-detail-buy button.btn-primary,
   margin: 0 auto !important;
 }
 
-html.is-ctl-product .product-detail-buy .btn-buy:hover,
-html.is-ctl-product .product-detail-buy button.btn-primary:hover,
-.is-ctl-product .product-detail-buy .btn-buy:hover,
+.is-ctl-product .product-detail-buy .btn-buy:hover {
+  background: linear-gradient(135deg,#fff9f2,#f4e0c7) !important;
+}
+
 .is-ctl-product .product-detail-buy button.btn-primary:hover {
   transform: translateY(-1px) !important;
   background: linear-gradient(135deg,#fff9f2,#f4e0c7) !important;
@@ -1729,18 +1561,11 @@ html.is-ctl-product .product-detail-buy button.btn-primary:hover,
 }
 
 /* PayPal / Später bezahlen – стек під основною кнопкою */
-html.is-ctl-product .product-detail-payments,
 .is-ctl-product .product-detail-payments {
   max-width: 520px !important;
   margin: 1rem auto 0 !important;
 }
 
-html.is-ctl-product .product-detail-payments > * {
-  width: 100% !important;
-}
-
-html.is-ctl-product .product-detail-payments .btn,
-html.is-ctl-product .product-detail-payments button,
 .is-ctl-product .product-detail-payments .btn,
 .is-ctl-product .product-detail-payments button {
   border-radius: var(--rs-radius-pill, 999px) !important;
@@ -1749,48 +1574,8 @@ html.is-ctl-product .product-detail-payments button,
 
 /* ---- 7.7) ТАБИ ОПИСУ ---- */
 
-html.is-ctl-product .product-detail-tabs,
-.is-ctl-product .product-detail-tabs {
-  max-width: 1100px !important;
-  margin: 2.6rem auto 0 !important;
-}
-
-html.is-ctl-product .product-detail-tabs .nav-tabs,
 .is-ctl-product .product-detail-tabs .nav-tabs {
-  border-bottom: 0 !important;
   display: flex !important;
-  gap: 0.55rem !important;
-  flex-wrap: wrap !important;
-}
-
-html.is-ctl-product .product-detail-tabs .nav-tabs .nav-link,
-.is-ctl-product .product-detail-tabs .nav-tabs .nav-link {
-  border-radius: 999px !important;
-  border: 1px solid rgba(80,60,40,0.18) !important;
-  background: rgba(255,255,255,0.92) !important;
-  padding: 0.45rem 1.1rem !important;
-  font-size: 0.86rem !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.14em !important;
-  color: var(--rs-text-muted) !important;
-  transition: background 0.16s ease, color 0.16s ease, box-shadow 0.16s ease !important;
-}
-
-html.is-ctl-product .product-detail-tabs .nav-tabs .nav-link.active,
-.is-ctl-product .product-detail-tabs .nav-tabs .nav-link.active {
-  background: linear-gradient(135deg,#f0dcc1,#e1c19c) !important;
-  color: var(--rs-text-main, #2c1f15) !important;
-  box-shadow: 0 10px 28px rgba(80,52,30,0.26) !important;
-}
-
-html.is-ctl-product .product-detail-tabs .tab-content,
-.is-ctl-product .product-detail-tabs .tab-content {
-  margin-top: 1.4rem !important;
-  background: rgba(255,255,255,0.95) !important;
-  border-radius: 18px !important;
-  padding: 1.6rem 1.8rem !important;
-  box-shadow: 0 16px 40px rgba(80,52,30,0.2) !important;
-  border: 1px solid rgba(80,60,40,0.12) !important;
 }
 
 /* ---- 7.7a) RICH PRODUCT DESCRIPTIONS ----
@@ -1942,111 +1727,45 @@ html.rs-wood body.is-ctl-product .product-detail-description-text > div[style*="
 /* ---- 7.8) РЕСПОНСИВ (product detail) ---- */
 
 @media (max-width: 1024px) {
-  html.is-ctl-product .product-detail-main,
   .is-ctl-product .product-detail-main {
     grid-template-columns: minmax(0,1fr) !important;
     gap: 1.9rem !important;
   }
 
-  html.is-ctl-product .product-detail-media,
   .is-ctl-product .product-detail-media {
     max-width: 100% !important;
     margin: 0 auto !important;
   }
-
-  html.is-ctl-product .product-detail-buy,
-  .is-ctl-product .product-detail-buy {
-    padding: 1.5rem 1.4rem 1.6rem !important;
-  }
 }
 
 @media (max-width: 640px) {
-  html.is-ctl-product .product-detail,
   .is-ctl-product .product-detail {
     padding: 0 12px !important;
-    max-width: 100% !important;
   }
 
   /* кількість + кнопка в колонку */
-  html.is-ctl-product .product-detail-buy .buy-widget-container .row,
   .is-ctl-product .product-detail-buy .buy-widget-container .row {
     flex-direction: column-reverse !important; /* кнопка зверху, кількість під нею */
   }
 
-  html.is-ctl-product .product-detail-buy .product-detail-quantity-group.quantity-selector-group,
   .is-ctl-product .product-detail-buy .product-detail-quantity-group.quantity-selector-group {
     max-width: 100% !important;
-  }
-
-  /* outer corridor padding на мобілці */
-  body.is-ctl-product .content-main > .container,
-  body.is-ctl-product .content-main .container,
-  body.is-ctl-product .cms-page,
-  body.is-ctl-product .cms-section .boxed,
-  body.is-ctl-product .product-detail,
-  body.is-ctl-product .product-detail-main,
-  body.is-ctl-product .product-detail-tabs,
-  body.is-ctl-product .product-detail-headline,
-  body.is-ctl-product .breadcrumb {
-    max-width: 100% !important;
-    padding-left: 12px !important;
-    padding-right: 12px !important;
   }
 }
 
 /* =========================================================
-   8) PRODUCT DETAIL — ALIGN + MEDIA / GALLERY
-   [TODO-CLEANUP #1] Нижче ТРИ послідовні блоки про галерею, що конфліктують
-   (height-fix → max-height/crop → contain/no-crop). Зараз виграє останній.
-   НІЧОГО НЕ ВИДАЛЕНО до уточнення бажаного вигляду галереї.
+   8) PRODUCT DETAIL — БАЗА ГАЛЕРЕЇ + КОРИДОР
+   Колишні три конфліктні блоки галереї (фіксовані 520px / 70vh) повністю
+   перекривала секція 11.3, тож їх прибрано. Висоту галереї задає 11.3
+   + JS "RS GALLERY AUTO-HEIGHT"; тут лишились лише правила, що реально діють.
    ========================================================= */
 
-/* ---- 8a) ALIGN + MEDIA HEIGHT FIX ---- */
-
-/* синхронізація коридору верх (main) і низ (tabs) */
-body.is-ctl-product .product-detail-tabs,
-body.is-ctl-product .product-detail-tabs .nav-tabs,
-body.is-ctl-product .product-detail-tabs .tab-content {
-  max-width: 1100px !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-}
-
-body.is-ctl-product .product-detail-tabs {
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-}
-
-body.is-ctl-product .product-detail-tabs .tab-content {
-  width: 100% !important;
-}
-
-body.is-ctl-product .product-detail-tabs .container,
-body.is-ctl-product .product-detail-tabs .container-fluid {
-  max-width: 1100px !important;
-  padding-left: 18px !important;
-  padding-right: 18px !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-}
-
-body.is-ctl-product .product-detail-main {
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-}
-
-/* медіа-картка не тягнеться вниз порожнім блоком */
-body.is-ctl-product .product-detail-media {
-  padding-bottom: 1.05rem !important;
-  align-self: start !important;
-}
+/* ---- 8a) Галерея: заокруглення та без ratio-padding ---- */
 
 body.is-ctl-product .product-detail-media .gallery-slider,
 body.is-ctl-product .product-detail-media .gallery-slider-container,
 body.is-ctl-product .product-detail-media .gallery-slider-wrapper,
 body.is-ctl-product .product-detail-media .tns-outer {
-  max-height: 520px !important;
-  overflow: hidden !important;
   border-radius: 18px !important;
 }
 
@@ -2056,34 +1775,7 @@ body.is-ctl-product .product-detail-media .gallery-slider-item {
   padding-bottom: 0 !important;
 }
 
-@media (max-width: 1024px) {
-  body.is-ctl-product .product-detail-tabs .container,
-  body.is-ctl-product .product-detail-tabs .container-fluid {
-    padding-left: 18px !important;
-    padding-right: 18px !important;
-  }
-
-  body.is-ctl-product .product-detail-media .gallery-slider,
-  body.is-ctl-product .product-detail-media .gallery-slider-container,
-  body.is-ctl-product .product-detail-media .gallery-slider-wrapper,
-  body.is-ctl-product .product-detail-media .tns-outer {
-    max-height: 70vh !important;
-  }
-}
-
-@media (max-width: 640px) {
-  body.is-ctl-product .product-detail-tabs .container,
-  body.is-ctl-product .product-detail-tabs .container-fluid {
-    padding-left: 12px !important;
-    padding-right: 12px !important;
-  }
-}
-
-/* ---- 8b) PRODUCT GALLERY: NO CROP (contain) ---- */
-
-body.is-ctl-product .product-detail-media {
-  overflow: hidden !important;
-}
+/* ---- 8b) Галерея: фото повністю (contain), без обрізання ---- */
 
 /* 1) Забираємо cover-логіку в контейнерах теми/Shopware */
 body.is-ctl-product .product-detail-media .cms-image-container.is-cover,
@@ -2095,7 +1787,9 @@ body.is-ctl-product .product-detail-media .gallery-slider-image {
   position: relative !important;
 }
 
-/* 2) КЛЮЧ: картинки/постери – тільки contain, без обрізання */
+/* 2) КЛЮЧ: картинки/постери – тільки contain, без обрізання.
+   Увага: "picture img" має вищу специфічність, ніж img-правило в 11.3,
+   тож для фото всередині <picture> діють саме ці height/max-height. */
 body.is-ctl-product .product-detail-media img,
 body.is-ctl-product .product-detail-media picture img {
   width: 100% !important;
@@ -2112,33 +1806,26 @@ body.is-ctl-product .product-detail-media .gallery-slider-container,
 body.is-ctl-product .product-detail-media .gallery-slider-wrapper,
 body.is-ctl-product .product-detail-media .tns-outer,
 body.is-ctl-product .product-detail-media .tns-inner {
-  max-height: 520px !important;
-  height: 520px !important;
   overflow: hidden !important;
 }
 
 /* 4) На мобілці — адаптивна висота */
 @media (max-width: 1024px) {
-  body.is-ctl-product .product-detail-media .gallery-slider,
-  body.is-ctl-product .product-detail-media .gallery-slider-container,
-  body.is-ctl-product .product-detail-media .gallery-slider-wrapper,
-  body.is-ctl-product .product-detail-media .tns-outer,
-  body.is-ctl-product .product-detail-media .tns-inner {
-    height: min(70vh, 520px) !important;
-    max-height: min(70vh, 520px) !important;
-  }
-
   body.is-ctl-product .product-detail-media img,
   body.is-ctl-product .product-detail-media picture img {
     max-height: min(70vh, 520px) !important;
   }
 }
 
-/* ---- 8c) ОДИН коридор на всю сторінку продукту (фінальний дубль) ---- */
-/* [TODO-CLEANUP #2] дублює 7.0 — звести до одного. */
-
+/* ---- 8c) КОРИДОР сторінки товару (єдине місце) ----
+   Зовнішні контейнери — 1100px по центру; блоки товару всередині —
+   на всю ширину коридору, без власних бічних відступів.
+   (max-width/margin табів далі перекриває 11.5.) */
 body.is-ctl-product .content-main > .container,
-body.is-ctl-product .content-main .container {
+body.is-ctl-product .content-main .container,
+body.is-ctl-product .cms-page,
+body.is-ctl-product .cms-section .boxed {
+  width: 100% !important;
   max-width: 1100px !important;
   margin-left: auto !important;
   margin-right: auto !important;
@@ -2151,11 +1838,20 @@ body.is-ctl-product .product-detail-main,
 body.is-ctl-product .product-detail-tabs,
 body.is-ctl-product .product-detail-headline,
 body.is-ctl-product .breadcrumb {
+  width: 100% !important;
   max-width: 100% !important;
   margin-left: 0 !important;
   margin-right: 0 !important;
   padding-left: 0 !important;
   padding-right: 0 !important;
+}
+
+/* таби: навігація й контент у тому ж коридорі */
+body.is-ctl-product .product-detail-tabs .nav-tabs,
+body.is-ctl-product .product-detail-tabs .tab-content {
+  max-width: 1100px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
 
 body.is-ctl-product .product-detail-tabs .container,
@@ -2185,92 +1881,31 @@ body.is-ctl-product .product-detail-tabs .tab-content {
 
 @media (max-width: 640px) {
   body.is-ctl-product .content-main > .container,
-  body.is-ctl-product .content-main .container {
+  body.is-ctl-product .content-main .container,
+  body.is-ctl-product .cms-page,
+  body.is-ctl-product .cms-section .boxed {
     padding-left: 12px !important;
     padding-right: 12px !important;
+  }
+
+  body.is-ctl-product .cms-page,
+  body.is-ctl-product .cms-section .boxed {
+    max-width: 100% !important;
   }
 }
 
 /* =========================================================
    9) PRODUCT DETAIL — HARMONIZE v3
-   - 9a) свотчі / pill варіантів (Farbe)
    - 9b) картки крос-селінгу та "Ähnliche Artikel" у стилі сайту
    - 9c) стискання картки опису (прибрати порожнечу)
    Усе scoped під .is-ctl-product (каталог не зачіпається).
    ========================================================= */
 
-/* ---- 9a) ВАРІАНТИ: pill-кнопки + кольорові свотчі ---- */
-
-/* прихований оригінальний select (тільки коли pill створились) */
-.is-ctl-product select.rs-variant-hidden {
-  display: none !important;
-}
-
-.is-ctl-product .rs-variant-pill-row {
-  display: flex !important;
-  flex-wrap: wrap !important;
-  gap: 0.55rem !important;
-  margin-top: 0.35rem !important;
-}
-
-.is-ctl-product .rs-variant-pill {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 0.5rem !important;
-  padding: 0.5rem 1rem !important;
-  border-radius: 999px !important;
-  border: 1px solid rgba(80, 60, 40, 0.3) !important;
-  background: rgba(255, 255, 255, 0.92) !important;
-  color: var(--rs-text-main, #3c2b1c) !important;
-  font-size: 0.88rem !important;
-  line-height: 1.1 !important;
-  cursor: pointer !important;
-  box-shadow: 0 6px 16px rgba(80, 52, 30, 0.14) !important;
-  transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease,
-    border-color 0.16s ease !important;
-}
-
-.is-ctl-product .rs-variant-pill:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 10px 24px rgba(80, 52, 30, 0.2) !important;
-  background: rgba(255, 255, 255, 0.98) !important;
-}
-
-.is-ctl-product .rs-variant-pill.is-active {
-  background: linear-gradient(135deg, #f0dcc1, #e1c19c) !important;
-  border-color: var(--rs-accent, #b7773d) !important;
-  box-shadow: 0 10px 26px rgba(80, 52, 30, 0.26) !important;
-  font-weight: 600 !important;
-}
-
-.is-ctl-product .rs-variant-pill.is-disabled {
-  opacity: 0.4 !important;
-  cursor: not-allowed !important;
-  text-decoration: line-through !important;
-}
-
-/* кольоровий кружечок-свотч */
-.is-ctl-product .rs-variant-pill__dot {
-  width: 18px !important;
-  height: 18px !important;
-  border-radius: 50% !important;
-  border: 1px solid rgba(0, 0, 0, 0.2) !important;
-  flex: 0 0 auto !important;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35) !important;
-}
-
-.is-ctl-product .rs-variant-pill.is-active .rs-variant-pill__dot {
-  outline: 2px solid var(--rs-accent, #b7773d) !important;
-  outline-offset: 2px !important;
-}
-
 /* ---- 9b) КАРТКИ КРОС-СЕЛІНГУ / СХОЖИХ ТОВАРІВ ---- */
 
 /* заголовки секцій ("Kunden haben auch gesehen", "Ähnliche Artikel") */
 .is-ctl-product .product-detail-tabs ~ * .product-slider-headline,
-.is-ctl-product .cms-element-product-slider .product-slider-headline,
 .is-ctl-product .product-cross-selling-tab-title,
-.is-ctl-product .product-detail-cross-selling .product-slider-headline,
 .is-ctl-product .product-slider-container .product-slider-headline {
   font-family: var(--rs-font-serif) !important;
   letter-spacing: 0.03em !important;
@@ -2410,15 +2045,6 @@ body.is-ctl-product .product-detail-tabs .tab-content {
 .rs-wood .cms-element-product-slider .product-box .product-action {
   margin-top: auto !important;   /* кнопка завжди внизу картки */
   padding-top: 0.7rem !important;
-}
-
-/* 10.3) Тач-пристрої (без :hover) — дублюємо явно, щоб гарантувати показ */
-@media (hover: none) {
-  .rs-wood .product-box .product-action {
-    position: static !important;
-    opacity: 1 !important;
-    transform: none !important;
-  }
 }
 
 /* =========================================================
@@ -2991,13 +2617,11 @@ body.is-ctl-product .product-detail-tabs .tab-content {
      специфічність 0,4,1) — тут той самий селектор, але пізніше в коді. */
   body.is-ctl-product .product-detail-buy .row.buy-widget-container {
     flex-wrap: wrap !important;
-    gap: 0.7rem !important;
   }
   body.is-ctl-product .product-detail-buy .row.buy-widget-container fieldset.col-4 {
     order: 1 !important;
     flex: 1 1 100% !important;
     width: 100% !important;
-    max-width: none !important;
     display: flex !important;
     justify-content: center !important;
   }
@@ -3011,9 +2635,6 @@ body.is-ctl-product .product-detail-tabs .tab-content {
     width: auto !important;        /* капсула природної ширини, не на всю */
     max-width: 200px !important;
     flex: 0 0 auto !important;
-  }
-  body.is-ctl-product .product-detail-buy .btn-buy {
-    width: 100% !important;
   }
   body.is-ctl-product .product-detail-tabs .nav-tabs {
     justify-content: flex-start !important;
@@ -3199,7 +2820,7 @@ body.is-ctl-product .product-box .product-quickview .btn {
 
    ВАЖЛИВО про специфічність: базове правило popover має селектор
    `.rs-wood .cms-element-product-listing .rs-desc-popover` (0,3,0) і лежить
-   в ОКРЕМОМУ <style>, що вантажиться ПІСЛЯ цього файлу. Тому тут вживаємо
+   в ОКРЕМОМУ \3c style>, що вантажиться ПІСЛЯ цього файлу. Тому тут вживаємо
    `html.rs-wood …` (0,3,1) — вища специфічність перемагає незалежно від
    порядку завантаження.
    ========================================================= */

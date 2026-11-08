@@ -1,12 +1,20 @@
 /* ВЕРСІЯ-МАРКЕР: для перевірки в консолі, що завантажена нова збірка. */
 console.log("%cRohrstöcke theme JS v5 (product-stable)", "color:#b7773d;font-weight:bold;");
 
-/* ========== 1) RS WOOD THEME INIT (клас + анімації) ========== */
-(function () {
-  if (!document.documentElement.classList.contains("rs-wood")) {
-    document.documentElement.classList.add("rs-wood");
-  }
+/* Клас-маркер теми: усі стилі rohrstoecke-theme.css прив'язані до html.rs-wood. */
+document.documentElement.classList.add("rs-wood");
 
+/* Запуск після готовності DOM (або одразу, якщо DOM уже готовий). */
+function rsOnReady(fn) {
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", fn);
+  } else {
+    fn();
+  }
+}
+
+/* ========== 1) RS WOOD THEME INIT (анімації появи) ========== */
+(function () {
   function activateRsAnimations() {
     var els = document.querySelectorAll("[data-rs-animate]");
     if (!("IntersectionObserver" in window)) {
@@ -33,11 +41,7 @@ console.log("%cRohrstöcke theme JS v5 (product-stable)", "color:#b7773d;font-we
     });
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", activateRsAnimations);
-  } else {
-    activateRsAnimations();
-  }
+  rsOnReady(activateRsAnimations);
 })();
 
 /* Search: mobile filter access and clear actions for variant products. */
@@ -92,11 +96,7 @@ console.log("%cRohrstöcke theme JS v5 (product-stable)", "color:#b7773d;font-we
     }
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initSearchFilters);
-  } else {
-    initSearchFilters();
-  }
+  rsOnReady(initSearchFilters);
 })();
 
 /* ========== 2) RS HEADER OVERRIDE (новий хедер + перенос меню/іконок/пошуку + ACRIS Vorschau) ========== */
@@ -106,10 +106,6 @@ console.log("%cRohrstöcke theme JS v5 (product-stable)", "color:#b7773d;font-we
 
   // максимум, до якого вважаємо, що це «мобайл» (телефон + планшет)
   var MOBILE_MAX = 1024;
-
-  if (!document.documentElement.classList.contains("rs-wood")) {
-    document.documentElement.classList.add("rs-wood");
-  }
 
   function buildHeader() {
     var header = document.querySelector("header.header-main");
@@ -328,13 +324,7 @@ console.log("%cRohrstöcke theme JS v5 (product-stable)", "color:#b7773d;font-we
   function ensureSearchSuggestInHeader(node) {
     if (!node) return;
 
-    var suggest =
-      node.closest && node.closest(".search-suggest.js-search-result")
-        ? node.closest(".search-suggest.js-search-result")
-        : (node.matches &&
-           node.matches(".search-suggest.js-search-result")
-           ? node
-           : null);
+    var suggest = node.closest ? node.closest(".search-suggest.js-search-result") : null;
 
     if (!suggest) return;
 
@@ -373,12 +363,7 @@ console.log("%cRohrstöcke theme JS v5 (product-stable)", "color:#b7773d;font-we
         m.addedNodes.forEach(function (node) {
           if (node.nodeType !== 1) return;
 
-          if (
-            node.matches(".search-suggest.js-search-result") ||
-            node.matches(".search-suggest-container") ||
-            node.matches(".search-suggest") ||
-            node.classList.contains("js-search-result")
-          ) {
+          if (node.matches(".search-suggest, .search-suggest-container, .js-search-result")) {
             ensureSearchSuggestInHeader(node);
           } else {
             var inner = node.querySelector &&
@@ -404,30 +389,26 @@ console.log("%cRohrstöcke theme JS v5 (product-stable)", "color:#b7773d;font-we
   }
 
   // Ініціалізація
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", function () {
-      buildHeader();
-      initMobile();
-      startSearchSuggestObserver();
-    });
-  } else {
+  rsOnReady(function () {
     buildHeader();
     initMobile();
     startSearchSuggestObserver();
-  }
+  });
 
-  // Оновлюємо класи при зміні розміру вікна
+  // Оновлюємо класи при зміні розміру вікна (не частіше ніж раз на кадр)
+  var resizeQueued = false;
   window.addEventListener("resize", function () {
-    updateMobileClass();
-    relocateSearch();
-    setupMobileSearch();
+    if (resizeQueued) return;
+    resizeQueued = true;
+    requestAnimationFrame(function () {
+      resizeQueued = false;
+      initMobile();
+    });
   });
 })();
 
-/* ========== 3) RS PRODUCT DETAIL ENHANCEMENTS (variant pills + анімація блоків) ========== */
+/* ========== 3) RS PRODUCT DETAIL ENHANCEMENTS (авто-висота галереї + стрілки) ========== */
 (function () {
-  if (!document.documentElement.classList.contains("rs-wood")) return;
-
   // УВАГА: у Shopware/ThemeWare клас is-ctl-product сидить на <body>, а не на <html>.
   // Перевіряємо обидва (і робимо це під час init, коли body вже існує).
   function rsIsProductPage() {
@@ -443,8 +424,7 @@ console.log("%cRohrstöcke theme JS v5 (product-stable)", "color:#b7773d;font-we
   //  - data-rs-animate ставив opacity:0 і ховав контент (спостерігач rs-in-view
   //    встигав відпрацювати раніше, ніж блоки отримували атрибут);
   //  - варіанти лишаємо рідним випадаючим списком Shopware (<select>),
-  //    стилізованим у секції 7.5 CSS — як у первинній версії.
-  // IIFE лишаємо як точку входу для майбутніх product-енхансментів.
+  //    стилізованим у секції 11.4 CSS (стилі pill-кнопок з CSS прибрано).
 
   /* ===== RS GALLERY AUTO-HEIGHT =====
      Фото товару всі різного розміру, а tns-слайдер тримає висоту "вікна"
@@ -498,9 +478,9 @@ console.log("%cRohrstöcke theme JS v5 (product-stable)", "color:#b7773d;font-we
     rsFitGallery();
     rsRevealArrows();
     // tns ініціалізується асинхронно — перерахунок ще кілька разів
-    setTimeout(function () { rsFitGallery(); rsRevealArrows(); }, 250);
-    setTimeout(function () { rsFitGallery(); rsRevealArrows(); }, 700);
-    setTimeout(function () { rsFitGallery(); rsRevealArrows(); }, 1500);
+    [250, 700, 1500].forEach(function (delay) {
+      setTimeout(function () { rsFitGallery(); rsRevealArrows(); }, delay);
+    });
 
     // реагуємо на зміну активного слайда (tns перемикає клас tns-slide-active)
     document
@@ -535,9 +515,5 @@ console.log("%cRohrstöcke theme JS v5 (product-stable)", "color:#b7773d;font-we
     rsSetupGalleryAutoHeight();
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initProductDetail);
-  } else {
-    initProductDetail();
-  }
+  rsOnReady(initProductDetail);
 })();
